@@ -1,4 +1,4 @@
-# Rust+C WASM  
+# Rust+C WASM compilation test
 
 I created this repository to test the current state of the Rust nightly compiler for producing a compatible C ABI with `--Z wasm_c_abi=spec`.
 
