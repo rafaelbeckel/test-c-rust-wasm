@@ -1,24 +1,23 @@
-./build_subtract_with_llvm_ir.sh
-
-cd wasm
-./build_wasm_with_llvm_ir.sh
-
-cd ..
+./build_rust.sh
+./build_c.sh
 
 # Link add.ll and subtract.ll to a single WebAssembly binary
 llc \
     -march=wasm32 \
     -filetype=obj \
-    add.ll
+    c_maths.ll
 
 llc \
     -march=wasm32 \
     -filetype=obj \
-    subtract.ll
+    r_maths.ll
 
 wasm-ld \
     --no-entry \
     --export-all \
     -o advanced_maths.wasm \
-    add.o \
-    subtract.o
+    c_maths.o \
+    r_maths.o
+
+# you can use wasm2wat to disassemble it and see exported symbols
+# wasm2wat advanced_maths.wasm

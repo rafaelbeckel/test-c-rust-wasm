@@ -1,3 +1,5 @@
+cd wasm
+
 # ---------------------------------------------------------
 # STEP 1: Build LLVM IR and object file from C source code
 clang \
@@ -5,23 +7,21 @@ clang \
     -emit-llvm \
     -c \
     -S \
-    add.c
+    ./maths.c
 
 # --target=wasm32 # Target WebAssembly
 # -emit-llvm      # Emit LLVM IR - instead of host machine code
 # -c              # Only compile, no linking just yet
 # -S              # Emit human-readable assembly rather than binary
 
-# @TODO do the same with Rust here (i.e. subtract.rs)
-
 # ---------------------------------------------------------
 # STEP 2: Compile the LLVM IR to a WebAssembly object file
 llc \
     -march=wasm32 \
     -filetype=obj \
-    add.ll
+    maths.ll
 
-cp add.ll ../add.ll
+cp maths.ll ../c_maths.ll
 
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
@@ -34,12 +34,14 @@ cp add.ll ../add.ll
 # wasm-objdump -x add.o
 
 # ---------------------------------------------------------
-# STEP 3: Link the object file to a WebAssembly binary
-wasm-ld \
-    --no-entry \
-    --export-all \
-    -o ../add.wasm \
-    add.o
+# STEP 3: (done in compile_both.sh) Link the object file to a WebAssembly binary
+# wasm-ld \
+#     --no-entry \
+#     --export-all \
+#     -o ../c_maths.wasm \
+#     add.o
 
 # --no-entry   # Don't include a main function
 # --export-all # Export all functions
+
+cd ..
