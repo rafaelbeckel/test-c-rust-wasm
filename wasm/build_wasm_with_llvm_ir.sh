@@ -21,6 +21,8 @@ llc \
     -filetype=obj \
     add.ll
 
+cp add.ll ../add.ll
+
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
 
