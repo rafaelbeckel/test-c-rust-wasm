@@ -9,11 +9,12 @@
       (async () => {
         // Build the WebAssembly instance.
         const memory = new WebAssembly.Memory({ initial: 2 });
-        const response = await fetch("./copy.wasm");
-        const bytes = await response.arrayBuffer();
-        const { instance } = await WebAssembly.instantiate(bytes, {
-          env: { memory },
-        });
+        const { instance } = await WebAssembly.instantiateStreaming(
+          fetch("copy.wasm"),
+          {
+            js: { mem: memory },
+          }
+        );
 
         // Text to copy.
         const text = "Hello from JavaScript!";
