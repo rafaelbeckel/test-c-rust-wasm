@@ -6,9 +6,9 @@
     <h1>Check console log</h1>
     <script type="module">
       (async () => {
-        const response = await fetch("add.wasm");
-        const bytes = await response.arrayBuffer();
-        const { instance } = await WebAssembly.instantiate(bytes);
+        const { instance } = await WebAssembly.instantiateStreaming(
+          fetch("add.wasm")
+        );
 
         console.log("The answer is: " + instance.exports.add(1, 2));
       })();

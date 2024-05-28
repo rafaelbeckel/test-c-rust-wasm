@@ -8,6 +8,9 @@
 # Which can be downloaded from: https://github.com/jedisct1/libclang_rt.builtins-wasm32.a
 # This page says we can also use Zig as a C compiler to make it work without downloading anything.
 
+# @TODO investigate why this is not importing memory from the host correctly.
+#       do that AFTER you link Rust+C together in WASM without std
+
 clang \
     --target=wasm32-unknown-wasi \
     --sysroot /tmp/wasi-libc \
