@@ -1,5 +1,5 @@
 #[no_mangle]
-pub fn subtract(left: usize, right: usize) -> usize {
+pub extern "C" fn subtract(left: usize, right: usize) -> usize {
     if left < right {
         return 0;
     }
