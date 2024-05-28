@@ -10,6 +10,8 @@
 
 # @TODO investigate why this is not importing memory from the host correctly.
 #       do that AFTER you link Rust+C together in WASM without std
+# Links:
+# - https://depth-first.com/articles/2019/10/16/compiling-c-to-webassembly-and-running-it-without-emscripten/
 
 clang \
     --target=wasm32-unknown-wasi \

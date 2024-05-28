@@ -12,6 +12,14 @@
 
         console.log("The answer is: " + instance.exports.add(1, 2));
       })();
+
+      (async () => {
+        const { instance } = await WebAssembly.instantiateStreaming(
+          fetch("subtract.wasm")
+        );
+
+        console.log("The answer is: " + instance.exports.subtract(2, 1));
+      })();
     </script>
   </body>
 </html>
