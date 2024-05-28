@@ -10,7 +10,7 @@
           fetch("add.wasm")
         );
 
-        console.log("The answer is: " + instance.exports.add(1, 2));
+        console.log("Add answer is: " + instance.exports.add(1, 2));
       })();
 
       (async () => {
@@ -18,7 +18,18 @@
           fetch("subtract.wasm")
         );
 
-        console.log("The answer is: " + instance.exports.subtract(2, 1));
+        console.log("Subtract answer is: " + instance.exports.subtract(2, 1));
+      })();
+
+      (async () => {
+        const { instance } = await WebAssembly.instantiateStreaming(
+          fetch("advanced_maths.wasm")
+        );
+
+        console.log("Advanced maths add: " + instance.exports.subtract(2, 1));
+        console.log(
+          "Advanced maths subtract: " + instance.exports.subtract(2, 1)
+        );
       })();
     </script>
   </body>
