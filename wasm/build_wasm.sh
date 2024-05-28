@@ -3,8 +3,8 @@ clang \
     --no-standard-libraries \
     -Wl,--export-all \
     -Wl,--no-entry \
-    -o ../add.wasm \
-    add.c
+    -o ../c_maths.wasm \
+    maths.c
 
 # The options passed to clang are:
 #

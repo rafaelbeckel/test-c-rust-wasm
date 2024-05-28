@@ -1,3 +1,7 @@
+extern "C" {
+    fn add(left: usize, right: usize) -> usize;
+}
+
 #[no_mangle]
 pub extern "C" fn subtract(left: usize, right: usize) -> usize {
     if left < right {
@@ -5,6 +9,16 @@ pub extern "C" fn subtract(left: usize, right: usize) -> usize {
     }
 
     left - right
+}
+
+#[no_mangle]
+pub extern "C" fn multiply(left: usize, right: usize) -> usize {
+    let mut result = 0;
+    for _ in 0..right {
+        result = unsafe { add(result, left) };
+    }
+
+    result
 }
 
 #[cfg(test)]
