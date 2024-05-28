@@ -1,7 +1,7 @@
 ./build_rust.sh
 ./build_c.sh
 
-# Link add.ll and subtract.ll to a single WebAssembly binary
+# Link c_maths.ll and r_maths.ll to a single WebAssembly binary
 llc \
     -march=wasm32 \
     -filetype=obj \
