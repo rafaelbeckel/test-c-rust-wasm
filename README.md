@@ -7,3 +7,5 @@ The goal is to produce a single WASM binary containing both C and Rust code that
 Look at the `build_*.sh` files for a minimal build script that can do it.
 
 For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in `wasm-bindgen`.
+
+I plan to introduce some more complex examples, eventually.
