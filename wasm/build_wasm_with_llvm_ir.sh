@@ -14,7 +14,6 @@ clang \
 
 # @TODO do the same with Rust here (i.e. subtract.rs)
 
-
 # ---------------------------------------------------------
 # STEP 2: Compile the LLVM IR to a WebAssembly object file
 llc \
@@ -25,3 +24,20 @@ llc \
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
 
+# ---------------------------------------------------------
+# STEP 2.1 (optional: print human-readable object file)
+# Needs WABT: `brew install wabt`
+#
+# uncomment next line:
+# wasm-objdump -x add.o
+
+# ---------------------------------------------------------
+# STEP 3: Link the object file to a WebAssembly binary
+wasm-ld \
+    --no-entry \
+    --export-all \
+    -o ../add.wasm \
+    add.o
+
+# --no-entry   # Don't include a main function
+# --export-all # Export all functions
