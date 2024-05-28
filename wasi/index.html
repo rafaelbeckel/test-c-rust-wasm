@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- copy.html -->
+<html>
+  <head></head>
+  <body>
+    <h1>Check console log</h1>
+    <script type="module">
+      // allow use of async/await
+      (async () => {
+        // Build the WebAssembly instance.
+        const memory = new WebAssembly.Memory({ initial: 2 });
+        const response = await fetch("./copy.wasm");
+        const bytes = await response.arrayBuffer();
+        const { instance } = await WebAssembly.instantiate(bytes, {
+          env: { memory },
+        });
+
+        // Text to copy.
+        const text = "Hello from JavaScript!";
+
+        // Configure shared memory.
+        const view = new Uint8Array(memory.buffer);
+        const pInput = instance.exports.__heap_base;
+        const pOutput = pInput + 1024;
+
+        encode(view, pInput, text);
+
+        // Read the result.
+        const bytesCopied = instance.exports.copy(pInput, pOutput, text.length);
+
+        console.log("copy length", bytesCopied);
+        console.log("copy", decode(view, pOutput));
+      })();
+
+      // Encode string into memory starting at address base.
+      const encode = (memory, base, string) => {
+        for (let i = 0; i < string.length; i++) {
+          memory[base + i] = string.charCodeAt(i);
+        }
+
+        memory[base + string.length] = 0;
+      };
+
+      // Decode a string from memory starting at address base.
+      const decode = (memory, base) => {
+        let cursor = base;
+        let result = "";
+
+        while (memory[cursor] !== 0) {
+          result += String.fromCharCode(memory[cursor++]);
+        }
+
+        return result;
+      };
+    </script>
+  </body>
+</html>
