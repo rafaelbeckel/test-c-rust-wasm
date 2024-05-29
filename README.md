@@ -19,7 +19,7 @@ All methods are exported from a single `.wasm` file and can be called from JS.
 
 To build the project, just call `./build_both.sh`. You need llvm, clang, and Rust nightly.
 
-To see it working in your browser, use your prefered local server:
+To see it working in your browser, use your preferred local server:
 
 ```bash
 npm install -g serve
@@ -41,16 +41,17 @@ The main idea behind the scripts is simple:
 
 ## Next steps
 
-I plan to eventually introduce more complex examples with multiple files and importing external C and Rust libraries.
+I plan to eventually introduce more complex examples with multiple files and import external C and Rust libraries.
 
 ## References
 
-I went down a deep rabbit hole and read many articles, forums, GH issues, PRs, and threads before arriving in a solution and I won't mention them all here.
+I went down a deep rabbit hole and read many articles, forums, GH issues, PRs, and threads before arriving at a solution, and I won't mention them all here.
 
-One article deserves especial mention, though.
+One article deserves special mention, though.
 
-The main idea to transpile the code to LLVR IR and the steps to do it for C came from the article [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
+The main idea to transpile the code to LLVR IR and the steps to do it for C came from [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
 
-The funny thing is he mentioned these intermediate LLVM IR steps just the sake of completeness. He could very well have left it unmentioned, and he even writes that nobody uses it in practice.
+The funny thing is he mentioned this intermediate LLVM IR step just for the sake of completeness. He could very well have left it unmentioned, and he even writes that nobody uses it in practice.
 
 Well, I used it for this very specific case, so thank you [@surma](https://github.com/surma) for mentioning it anyway!
+
