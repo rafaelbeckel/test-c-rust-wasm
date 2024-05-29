@@ -14,7 +14,7 @@
 # - https://depth-first.com/articles/2019/10/16/compiling-c-to-webassembly-and-running-it-without-emscripten/
 
 clang \
-    --target=wasm32-unknown-wasi \
+    --target=wasm32-wasi \
     --sysroot /tmp/wasi-libc \
     -nostartfiles \
     -Wl,--import-memory \
