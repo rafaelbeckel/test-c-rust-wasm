@@ -12,7 +12,7 @@
         // Build the WebAssembly instance.
         const memory = new WebAssembly.Memory({ initial: 2 });
         const { instance } = await WebAssembly.instantiateStreaming(
-          fetch("copy.wasm"),
+          fetch("./wasi/copy.wasm"),
           {
             env: { memory },
             wasi_snapshot_preview1: new WASI({

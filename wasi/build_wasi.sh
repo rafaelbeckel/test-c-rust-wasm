@@ -20,7 +20,7 @@ clang \
     -Wl,--import-memory \
     -Wl,--no-entry \
     -Wl,--export-all \
-    -o ../copy.wasm \
+    -o copy.wasm \
     copy.c
 
 # --target=wasm32-unknown-wasi # Target WebAssembly with WASI
