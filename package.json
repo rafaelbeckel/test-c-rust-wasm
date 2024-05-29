@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.3.0"
+  }
+}

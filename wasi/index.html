@@ -5,6 +5,8 @@
   <body>
     <h1>Check console log</h1>
     <script type="module">
+      import { WASI } from "./wasi/browser_wasi_shim/index.js";
+
       // allow use of async/await
       (async () => {
         // Build the WebAssembly instance.
@@ -12,7 +14,12 @@
         const { instance } = await WebAssembly.instantiateStreaming(
           fetch("copy.wasm"),
           {
-            js: { mem: memory },
+            env: { memory },
+            wasi_snapshot_preview1: new WASI({
+              args: [],
+              env: {},
+              bindings: {},
+            }).wasiImport,
           }
         );
 
