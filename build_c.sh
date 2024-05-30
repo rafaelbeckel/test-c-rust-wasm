@@ -4,9 +4,8 @@ cd wasm
 # STEP 1: Build LLVM IR and object file from C source code
 clang \
     --target=wasm32 \
-    -emit-llvm \
     -c \
-    -S \
+    -o ../c_maths.o \
     ./maths.c
 
 # --target=wasm32 # Target WebAssembly
@@ -16,12 +15,6 @@ clang \
 
 # ---------------------------------------------------------
 # STEP 2: Compile the LLVM IR to a WebAssembly object file
-llc \
-    -march=wasm32 \
-    -filetype=obj \
-    maths.ll
-
-cp maths.ll ../c_maths.ll
 
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
@@ -44,4 +37,4 @@ cp maths.ll ../c_maths.ll
 # --no-entry   # Don't include a main function
 # --export-all # Export all functions
 
-cd ..
+# cd ..
