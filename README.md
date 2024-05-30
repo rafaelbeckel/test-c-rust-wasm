@@ -22,8 +22,7 @@ To build the project, just call `./build_both.sh`. You need llvm, clang, and Rus
 To see it working in your browser, use your preferred local server:
 
 ```bash
-npm install -g serve
-serve
+npx http-server -c-1
 ```
 
 Then, visit http://localhost:3000/wasm and check the console.
