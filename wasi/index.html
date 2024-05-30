@@ -7,7 +7,6 @@
     <script type="module">
       import { WASI } from "./wasi/browser_wasi_shim/index.js";
 
-      // allow use of async/await
       (async () => {
         // Build the WebAssembly instance.
         const memory = new WebAssembly.Memory({ initial: 2 });
