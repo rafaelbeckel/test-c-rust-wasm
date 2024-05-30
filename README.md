@@ -25,18 +25,11 @@ To see it working in your browser, use your preferred local server:
 npx serve
 ```
 
-Then, visit http://localhost:3000/wasm and check the console.
+Then, visit <http://localhost:3000/wasm> and check the console.
 
 ## How it works
 
 You can read the mini build scripts `build_c.sh`, `build_rust.sh`, and `build_both.sh` to check the commands needed to do it. You'll need LLVM and Rust nightly.
-
-The main idea behind the scripts is simple:
-
-- Transpile C to LLVM internal representation.
-- Transpile Rust to LLVM internal representation. Requires Rust nightly with `--Z wasm_c_abi=spec`.
-- Compile all `.ll` files with LLVM compiler `llc`.
-- Link the compiled files with `wasm-ld`.
 
 ## Next steps
 
@@ -44,13 +37,13 @@ I plan to eventually introduce more complex examples with multiple files and imp
 
 ## References
 
-I went down a deep rabbit hole and read many articles, forums, GH issues, PRs, and threads before arriving at a solution, and I won't mention them all here.
+Originally, the main idea behind the build scripts were to:
 
-One article deserves special mention, though.
+- Transpile C to LLVM internal representation.
+- Transpile Rust to LLVM internal representation.
+- Compile all `.ll` files with LLVM compiler `llc`.
+- Link the compiled files with `wasm-ld`.
 
-The main idea to transpile the code to LLVR IR and the steps to do it for C came from [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
+This idea and the steps to do it for C came from [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
 
-The funny thing is he mentioned this intermediate LLVM IR step just for the sake of completeness. He could very well have left it unmentioned, and he even writes that nobody uses it in practice.
-
-Well, I used it for this very specific case, so thank you [@surma](https://github.com/surma) for mentioning it anyway!
-
+These LLVM IR intermediate steps have been removed from this repository with a generous contribution from the original author. So, while we're not using this approach anymore, I'll leave the link to the article here for historical reasons.
