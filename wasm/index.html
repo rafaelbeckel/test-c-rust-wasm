@@ -8,7 +8,7 @@
       (async () => {
         // Look ma, Rust and C in the same WASM binary!
         const { instance } = await WebAssembly.instantiateStreaming(
-          fetch("advanced_maths.wasm")
+          fetch("/advanced_maths.wasm")
         );
 
         // JS calls Rust
