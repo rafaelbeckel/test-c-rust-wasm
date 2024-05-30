@@ -37,13 +37,13 @@ I plan to eventually introduce more complex examples with multiple files and imp
 
 ## References
 
-Originally, the main idea behind the build scripts were to:
+Originally, my main idea behind the build scripts was to:
 
 - Transpile C to LLVM internal representation.
 - Transpile Rust to LLVM internal representation.
 - Compile all `.ll` files with LLVM compiler `llc`.
 - Link the compiled files with `wasm-ld`.
 
-This idea and the steps to do it for C came from [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
+I've got this idea while reading the excellent article [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
 
-These LLVM IR intermediate steps have been removed from this repository with a generous contribution from the original author. So, while we're not using this approach anymore, I'll leave the link to the article here for historical reasons.
+These LLVM IR intermediate steps have been removed from this repository with a generous contribution from the original author. So, while we're not using this approach anymore, I'll leave the link to the article here for credit and historical reasons.
