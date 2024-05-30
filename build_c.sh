@@ -15,12 +15,6 @@ clang \
 
 # ---------------------------------------------------------
 # STEP 2: Compile the LLVM IR to a WebAssembly object file
-# llc \
-#     -march=wasm32 \
-#     -filetype=obj \
-#     maths.ll
-
-# cp maths.o ../c_maths.o
 
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
