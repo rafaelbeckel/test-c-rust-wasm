@@ -3,5 +3,14 @@
 version = 3
 
 [[package]]
+name = "cc"
+version = "1.0.98"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41c270e7540d725e65ac7f1b212ac8ce349719624d7bcff99f8e2e488e8cf03f"
+
+[[package]]
 name = "maths"
 version = "0.1.0"
+dependencies = [
+ "cc",
+]

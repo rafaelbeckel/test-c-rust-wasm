@@ -14,7 +14,11 @@ clang \
 # -S              # Emit human-readable assembly rather than binary
 
 # ---------------------------------------------------------
-# STEP 2: Compile the LLVM IR to a WebAssembly object file
+# STEP 2: (done in compile_both.sh) Compile the LLVM IR to a WebAssembly object file
+# llc \
+#     -march=wasm32 \
+#     -filetype=obj \
+#     maths.ll
 
 # -march=wasm32 # Target WebAssembly
 # -filetype=obj # Output an object file
@@ -36,5 +40,3 @@ clang \
 
 # --no-entry   # Don't include a main function
 # --export-all # Export all functions
-
-# cd ..
