@@ -1,13 +1,7 @@
 export RUSTFLAGS="--cfg=web_sys_unstable_apis --Z wasm_c_abi=spec" 
-rustc +nightly \
-  --target=wasm32-unknown-unknown \
-  -C opt-level=3 \
-  --crate-type=cdylib \
-  --emit=obj \
-  -o r_maths.o \
-  src/lib.rs
+cargo +nightly build --target=wasm32-unknown-unknown --release
 
-# cp target/wasm32-unknown-unknown/release/maths.wasm r_maths.wasm
+cp target/wasm32-unknown-unknown/release/libmaths.rlib r_maths.a
 
 # built in build_both.sh
 # cp target/wasm32-unknown-unknown/release/maths.wasm r_maths.wasm

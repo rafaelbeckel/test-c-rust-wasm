@@ -7,7 +7,7 @@ wasm-ld \
     --export-all \
     -o advanced_maths.wasm \
     c_maths.o \
-    r_maths.o
+    r_maths.a
 
 # you can use wasm2wat to disassemble it and see exported symbols
 # wasm2wat advanced_maths.wasm
