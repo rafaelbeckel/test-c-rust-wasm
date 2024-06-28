@@ -1,6 +1,5 @@
 fn main() {
     let mut build = cc::Build::new();
-    build.flag("-flto=thin");
     build.include("src");
     build.file("src/maths.c");
     build.compile("c_maths");
