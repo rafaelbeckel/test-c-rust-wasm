@@ -1,6 +1,5 @@
 fn main() {
     let mut build = cc::Build::new();
-    build.flag_if_supported("-std=c11");
 
     if let Some(libc) = std::env::var_os("DEP_WASM32_UNKNOWN_UNKNOWN_OPENBSD_LIBC_INCLUDE") {
         build.include(libc);
