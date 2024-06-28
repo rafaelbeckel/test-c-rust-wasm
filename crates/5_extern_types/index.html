@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- add.html -->
+<html>
+  <head></head>
+  <body>
+    <h1>Check console log</h1>
+    <script type="module">
+      import init, { Calculator } from "/pkg/ext_t_calculator.js";
+
+      (async () => {
+        await init();
+
+        const calculator = new Calculator();
+
+        // JS calls Rust
+        console.log("Subtract: " + calculator.subtract(2, 1)); // 1
+
+        // JS calls C
+        console.log("Add: " + calculator.add(1, 1)); // 2
+
+        // C calls Rust (calls subtract() in a loop)
+        console.log("Divide: " + calculator.divide(6, 2)); // 3
+
+        // Rust calls C (calls add() in a loop)
+        console.log("Multiply: " + calculator.multiply(2, 2)); // 4
+
+        // Store some number in C's heap
+        calculator.store(5);
+        console.log("Stored number: " + calculator.retrieve());
+
+        // Clear memory
+        calculator.clear();
+        console.log("Cleared memory: " + calculator.retrieve());
+      })();
+    </script>
+  </body>
+</html>

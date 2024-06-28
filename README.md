@@ -30,13 +30,19 @@ The crates in this workspace experiment with different build strategies, with in
 
    - The same example, but using the nightly feature `extern types`
 
-6. [Rust Bindgen](crates/6_rust_bindgen/)
+6. [Rust Bindgen (WIP)](crates/6_rust_bindgen/)
 
    - For projects that already use [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rus
 
-7. Uniffi
+## Other things to try
+
+1. Uniffi
 
    - I plan to add an example with Uniffi in the future.
+
+2. Combine different crates in a build script
+
+   - C code coming from a crate and Rust code from another, link them by using linker flags in build.rs. This could be used to overcome the limitation of WASM expecting "extern C" blocks from env.
 
 ## Contributing
 

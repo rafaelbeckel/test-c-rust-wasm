@@ -1,0 +1,18 @@
+[package]
+name = "ext_t_calculator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm32-unknown-unknown-openbsd-libc = "0.2"
+
+[build-dependencies]
+cc = "1.0"
