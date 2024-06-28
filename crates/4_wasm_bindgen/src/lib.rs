@@ -42,6 +42,12 @@ impl Drop for Calculator {
     }
 }
 
+impl Default for Calculator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl Calculator {
     #[wasm_bindgen(constructor)]
