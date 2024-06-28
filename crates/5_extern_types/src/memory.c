@@ -3,7 +3,7 @@
 // Pointer to store the memory address
 unsigned int *memory = NULL;
 
-// Function to store a value in memory
+// Stores a value in memory
 extern void store(unsigned int value)
 {
     if (memory == NULL) {
@@ -12,20 +12,18 @@ extern void store(unsigned int value)
     if (memory != NULL) { *memory = value; }
 }
 
-// Function to retrieve the value from memory
+// Retrieves the value from memory
 extern unsigned int retrieve()
 {
     if (memory != NULL) {
         return *memory;
     } else {
-        // Handle the case where memory is not allocated
-        // Returning 0 as a default value, you may choose to handle it
-        // differently
+        // Returns 0 as a default value
         return 0;
     }
 }
 
-// Function to clear the memory
+// Clears the memory
 extern void clear()
 {
     if (memory != NULL) {
