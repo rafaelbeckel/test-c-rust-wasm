@@ -69,14 +69,6 @@ impl Calculator {
             ffi::clear();
         }
     }
-
-    // forces wasm_bindgen to generate memory management functions
-    //
-    // @TODO check if there is a canonical way to do that
-    //       i.e. though an env variable or compiler argument
-    pub fn print(some_string: &str) -> String {
-        String::from(some_string)
-    }
 }
 
 #[no_mangle]
@@ -149,12 +141,6 @@ mod tests {
         let calculator = Calculator::new();
         let result = calculator.divide(6, 0);
         assert_eq!(result, 0);
-    }
-
-    #[test]
-    fn test_print() {
-        let result = Calculator::print("Hello, World!");
-        assert_eq!(result, "Hello, World!");
     }
 
     #[test]
