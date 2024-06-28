@@ -1,5 +1,7 @@
 # Linking Rust+C with the CC crate
 
+## Project 2: simple calculator built with CC
+
 Using the `cc` crate is the simplest and most reliable strategy for building Rust + C projects.
 
 It has a couple of caveats for WASM, though. There is an [open issue](https://github.com/rust-lang/rfcs/issues/2771) in Rust about the lack of `extern C` reexports in cdylibs. Because WASM in the web must be a cdylib, this issue applies here.
