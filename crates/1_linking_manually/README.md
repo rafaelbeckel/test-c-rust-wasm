@@ -23,6 +23,10 @@ npx serve
 
 Then, visit <http://localhost:3000>.
 
+## Inspecting the Binary
+
+Optionally, for inspecting the compiled binaries, it's a good idea to install [WebAssembly Binary Toolkit](https://github.com/WebAssembly/wabt). The build scripts assume you have it installed and call `wasm2wat`, but you can also comment these lines.
+
 ## References
 
 Originally, my main idea behind the build scripts was to:
