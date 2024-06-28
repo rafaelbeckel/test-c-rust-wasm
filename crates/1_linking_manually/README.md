@@ -1,5 +1,7 @@
 # Rust+C in the same WASM binary
 
+## Project 1: simple calculator with manual build
+
 This crate implements a simple calculator where:
 
 - `add()` is defined by C
