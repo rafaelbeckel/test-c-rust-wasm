@@ -4,46 +4,44 @@ I created this repository to test the current state of the Rust nightly compiler
 
 For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in `wasm-bindgen`.
 
-This project contains a minimal example of producing a single WASM binary with both C and Rust code that can call each other.
+This workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
 
-It's a simple calculator where:
+## Build Strategies
 
-- `add()` is defined by C
-- `subtract()` is defined by Rust
-- `multiply()` is defined by Rust but calls `add()` in C multiple times
-- `divide()` is defined by C but calls `subtract()` in Rust multiple times
+The crates in this workspace experiment with different build strategies, with increasing levels of complexity:
 
-All methods are exported from a single `.wasm` file and can be called from JS.
+1. [Linking Manually](crates/1_linking_manually)
 
-## Building
+   - A simple calculator with primitive data types and manual build
 
-To build the project, just call `./build_both.sh`. You need llvm, clang, and Rust nightly.
+2. [With CC Crate](crates/2_with_cc)
 
-To see it working in your browser, use your preferred local server:
+   - The same calculator built with the [CC crate](https://docs.rs/cc/1.0.101/cc/)
 
-```bash
-npx serve
-```
+3. [Libc and Heap](crates/3_libc_and_heap_allocation)
 
-Then, visit <http://localhost:3000/wasm> and check the console.
+   - We use [OpenBSD libc](https://github.com/trevyn/wasm32-unknown-unknown-openbsd-libc) to implement the Mem function in the calculator and store a value in the heap from C
 
-## How it works
+4. [Wasm Bindgen](crates/4_wasm_bindgen/)
 
-You can read the mini build scripts `build_c.sh`, `build_rust.sh`, and `build_both.sh` to check the commands needed to do it. You'll need LLVM and Rust nightly.
+   - We create a Calculator struct with member functions and export it with [Wasm Bindgen](https://github.com/rustwasm/wasm-bindgen)
 
-## Next steps
+5. [Extern Types](crates/5_extern_types/)
 
-I plan to eventually introduce more complex examples with multiple files and import external C and Rust libraries.
+   - The same example, but using the nightly feature `extern types`
 
-## References
+6. [Rust Bindgen](crates/6_rust_bindgen/)
 
-Originally, my main idea behind the build scripts was to:
+   - For projects that already use [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rus
 
-- Transpile C to LLVM internal representation.
-- Transpile Rust to LLVM internal representation.
-- Compile all `.ll` files with LLVM compiler `llc`.
-- Link the compiled files with `wasm-ld`.
+7. Uniffi
 
-I've got this idea while reading the excellent article [Compiling C to WebAssembly without Emscripten](https://dassur.ma/things/c-to-webassembly) by [@surma](https://github.com/surma).
+   - I plan to add an example with Uniffi in the future.
 
-These LLVM IR intermediate steps have been removed from this repository with a generous contribution from the original author. So, while we're not using this approach anymore, I'll leave the link to the article here for credit and historical reasons.
+## Contributing
+
+If you you'd like to see any other scenario listed here, feel free to open an Issue or a PR.
+
+If submitting a new example, create a numbered subfolder in the `crates` directory following the existing structure, and ensure your example builds correctly for both WASM and unit tests.
+
+Finally, run `cargo clippy` and stick with the default rules.
