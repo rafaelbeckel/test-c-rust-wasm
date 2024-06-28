@@ -1,12 +1,12 @@
 #import "subtract.h"
 
-int add(int first, int second)
+unsigned int add(unsigned int first, unsigned int second)
 {
     return first + second;
 }
 
 // Call Rust from C
-int divide(int dividend, int divisor)
+unsigned int divide(unsigned int dividend, unsigned int divisor)
 {
     if (divisor == 0) { return 0; }
 
