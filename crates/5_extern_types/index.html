@@ -3,34 +3,72 @@
 <html>
   <head></head>
   <body>
-    <h1>Check console log</h1>
-    <script type="module">
-      import init, { Calculator } from "/pkg/ext_t_calculator.js";
+    <h1>Rust + C Calculator Demo</h1>
 
+    <h2>Example 5: extern types</h2>
+
+    <p>
+      This is a simple demonstration of how to compile Rust and C together in
+      the same WASM binary, and make them call each other.
+    </p>
+
+    <p>
+      This example uses wasm-bindgen to generate a JS Calculator class and
+      experiments with the nightly feature <b>extern types</b>.
+    </p>
+
+    <p>
+      This only works if you manually control the FFI layer. If you use Rust
+      Bindgen, you will not be able to use this feature.
+    </p>
+
+    <h2>Built with wasm-pack</h2>
+
+    <div id="output"></div>
+
+    <script type="module">
+      import init, { Calculator } from "/pkg/wbg_calculator.js";
+
+      const output = document.getElementById("output");
+
+      // Option 1: instance from wasm-pack
       (async () => {
         await init();
-
-        const calculator = new Calculator();
+        let calculator = new Calculator();
 
         // JS calls Rust
-        console.log("Subtract: " + calculator.subtract(2, 1)); // 1
+        output.innerHTML += `<h3>Subtract is defined in Rust:</h3>`;
+        output.innerHTML += `<pre>calculator.subtract(2, 1)</pre>`;
+        output.innerHTML += `<p>= ${calculator.subtract(2, 1)}</p>`;
 
         // JS calls C
-        console.log("Add: " + calculator.add(1, 1)); // 2
+        output.innerHTML += `<h3>Add is defined in C:</h3>`;
+        output.innerHTML += `<pre>calculator.add(1, 1)</pre>`;
+        output.innerHTML += `<p>= ${calculator.add(1, 1)}</p>`;
 
         // C calls Rust (calls subtract() in a loop)
-        console.log("Divide: " + calculator.divide(6, 2)); // 3
+        output.innerHTML += `<h3>Divide is defined in C and calls subtract() in Rust multiple times:</h3>`;
+        output.innerHTML += `<pre>calculator.divide(6, 2)</pre>`;
+        output.innerHTML += `<p>= ${calculator.divide(6, 2)}</p>`;
 
         // Rust calls C (calls add() in a loop)
-        console.log("Multiply: " + calculator.multiply(2, 2)); // 4
+        output.innerHTML += `<h3>Multiply is defined in Rust and calls add() in C multiple times:</h3>`;
+        output.innerHTML += `<pre>calculator.multiply(2, 2)</pre>`;
+        output.innerHTML += `<p>= ${calculator.multiply(2, 2)}</p>`;
 
         // Store some number in C's heap
-        calculator.store(5);
-        console.log("Stored number: " + calculator.retrieve());
+        output.innerHTML += `<h3>We can store a single number in memory and retrieve it:</h3>`;
+        output.innerHTML += `<pre>calculator.store(42)</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
+        calculator.store(42);
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
 
         // Clear memory
+        output.innerHTML += `<h3>We can also clear it:</h3>`;
+        output.innerHTML += `<pre>calculator.clear()</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
         calculator.clear();
-        console.log("Cleared memory: " + calculator.retrieve());
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
       })();
     </script>
   </body>
