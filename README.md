@@ -28,7 +28,7 @@ The crates in this workspace experiment with different build strategies, with in
 
 5. [Extern Types](crates/5_extern_types/)
 
-   - This is the same example as the previous `wasm-bindgen` one, but using the nightly feature `extern types`. This produces a clean binary which only requires you to provide `malloc` and `free` from env.
+   - This is the same example as the previous `wasm-bindgen` one, but using the nightly feature `extern types`
 
 6. [Rust Bindgen (WIP)](crates/6_rust_bindgen/)
 
