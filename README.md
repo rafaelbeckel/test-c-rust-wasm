@@ -42,7 +42,7 @@ The crates in this workspace experiment with different build strategies, with in
 
 2. Combine different crates in a build script
 
-   - C code coming from a crate and Rust code from another, link them by using linker flags in build.rs. This could be used to overcome the limitation of WASM expecting "extern C" blocks from env.
+   - C code coming from a crate and Rust code from another, link them by using linker flags in build.rs.
 
 ## Contributing
 
