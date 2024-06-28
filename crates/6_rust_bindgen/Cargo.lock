@@ -15,41 +15,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "41c270e7540d725e65ac7f1b212ac8ce349719624d7bcff99f8e2e488e8cf03f"
 
 [[package]]
-name = "cc_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "ext_t_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
- "wasm-bindgen",
- "wasm32-unknown-unknown-openbsd-libc",
-]
-
-[[package]]
-name = "libc_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
- "wasm-bindgen",
- "wasm32-unknown-unknown-openbsd-libc",
-]
-
-[[package]]
 name = "log"
 version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
+
+[[package]]
+name = "maths"
+version = "0.1.0"
+dependencies = [
+ "cc",
+ "wasm-bindgen",
+ "wasm32-unknown-unknown-openbsd-libc",
+]
 
 [[package]]
 name = "once_cell"
@@ -73,15 +57,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "rbg_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
- "wasm-bindgen",
- "wasm32-unknown-unknown-openbsd-libc",
 ]
 
 [[package]]
@@ -162,20 +137,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6abee48844f5d109794276675f8f63c2ecdc21a1b941b45dd346e606fca3a8c"
 dependencies = [
  "cc",
-]
-
-[[package]]
-name = "wasm_ld_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
-]
-
-[[package]]
-name = "wbg_calculator"
-version = "0.1.0"
-dependencies = [
- "cc",
- "wasm-bindgen",
- "wasm32-unknown-unknown-openbsd-libc",
 ]

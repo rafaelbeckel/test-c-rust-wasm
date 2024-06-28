@@ -18,11 +18,11 @@ The crates in this workspace experiment with different build strategies, with in
 
    - The same calculator built with the [CC crate](https://docs.rs/cc/1.0.101/cc/)
 
-3. [Libc and Heap (WIP)](crates/3_libc_and_heap_allocation)
+3. [Libc and Heap](crates/3_libc_and_heap_allocation)
 
    - We use [OpenBSD libc](https://github.com/trevyn/wasm32-unknown-unknown-openbsd-libc) to implement the Mem function in the calculator and store/free a value in the heap from C with `malloc` and `free`
 
-4. [Wasm Bindgen (WIP)](crates/4_wasm_bindgen/)
+4. [Wasm Bindgen](crates/4_wasm_bindgen/)
 
    - We create a Calculator struct with member functions and export it with [Wasm Bindgen](https://github.com/rustwasm/wasm-bindgen)
 
@@ -34,7 +34,7 @@ The crates in this workspace experiment with different build strategies, with in
 
    - For projects that already use [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rus
 
-## Other things to try
+## Future plans
 
 1. Uniffi
 
