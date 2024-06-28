@@ -18,7 +18,7 @@ mod ffi {
 
 #[wasm_bindgen]
 
-struct Calculator {
+pub struct Calculator {
     instance: *mut ffi::Calculator,
 }
 
@@ -27,6 +27,12 @@ impl Drop for Calculator {
         unsafe {
             ffi::free_calculator(self.instance);
         }
+    }
+}
+
+impl Default for Calculator {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
