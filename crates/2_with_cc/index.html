@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <h1>Rust + C Calculator Demo</h1>
+
+    <p>
+      This is a simple demonstration of how to compile Rust and C together in
+      the same WASM binary, and make them call each other.
+    </p>
+
+    <p>
+      The library is a simple calculator that uses only primitive data types and
+      no memory management.
+    </p>
+
+    <p>
+      This version builds C from Rust with the cc crate.
+    </pre>
+
+    <h2> Built with cargo</h2>
+    <div id="output"></div>
+
+    <h2> Built with wasm-pack</h2>
+    <div id="wp_output"></div>
+
+    <script type="module">
+      const output = document.getElementById("output");
+      const wp_output = document.getElementById("wp_output");
+
+      import init from "/pkg/cc_calculator.js";
+
+      // Option 1: instance from wasm-pack
+      (async () => {
+        let from_wasm_pack = await init();
+
+        // JS calls Rust
+        wp_output.innerHTML += `<h3>Subtract is defined in Rust:</h3>`;
+        wp_output.innerHTML += `<pre>wasm.subtract(2, 1)</pre>`;
+        wp_output.innerHTML += `<p>= ${from_wasm_pack.subtract(2, 1)}</p>`;
+
+        // JS calls C
+        wp_output.innerHTML += `<h3>Add is defined in C:</h3>`;
+        wp_output.innerHTML += `<pre>wasm.add(1, 1)</pre>`;
+        wp_output.innerHTML += `<p>= ${from_wasm_pack.add(1, 1)}</p>`;
+
+        // C calls Rust (calls subtract() in a loop)
+        wp_output.innerHTML += `<h3>Divide is defined in C and calls subtract() in Rust multiple times:</h3>`;
+        wp_output.innerHTML += `<pre>wasm.divide(6, 2)</pre>`;
+        wp_output.innerHTML += `<p>= ${from_wasm_pack.divide(6, 2)}</p>`;
+
+        // Rust calls C (calls add() in a loop)
+        wp_output.innerHTML += `<h3>Multiply is defined in Rust and calls add() in C multiple times:</h3>`;
+        wp_output.innerHTML += `<pre>wasm.multiply(2, 2)</pre>`;
+        wp_output.innerHTML += `<p>= ${from_wasm_pack.multiply(2, 2)}</p>`;
+      })();
+
+      // Option 2: instance from cargo build
+      const { instance } = await WebAssembly.instantiateStreaming(
+        fetch("/build/cc_calculator.wasm")
+      );
+
+      const wasm = instance.exports;
+
+      // JS calls Rust
+      output.innerHTML += `<h3>Subtract is defined in Rust:</h3>`;
+      output.innerHTML += `<pre>wasm.subtract(2, 1)</pre>`;
+      output.innerHTML += `<p>= ${wasm.subtract(2, 1)}</p>`;
+
+      // JS calls C
+      output.innerHTML += `<h3>Add is defined in C:</h3>`;
+      output.innerHTML += `<pre>wasm.add(1, 1)</pre>`;
+      output.innerHTML += `<p>= ${wasm.add(1, 1)}</p>`;
+
+      // C calls Rust (calls subtract() in a loop)
+      output.innerHTML += `<h3>Divide is defined in C and calls subtract() in Rust multiple times:</h3>`;
+      output.innerHTML += `<pre>wasm.divide(6, 2)</pre>`;
+      output.innerHTML += `<p>= ${wasm.divide(6, 2)}</p>`;
+
+      // Rust calls C (calls add() in a loop)
+      output.innerHTML += `<h3>Multiply is defined in Rust and calls add() in C multiple times:</h3>`;
+      output.innerHTML += `<pre>wasm.multiply(2, 2)</pre>`;
+      output.innerHTML += `<p>= ${wasm.multiply(2, 2)}</p>`;
+    </script>
+  </body>
+</html>
