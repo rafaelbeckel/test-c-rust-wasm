@@ -28,6 +28,9 @@ extern struct Calculator *new_calculator()
     calculator->subtract = subtract;
     calculator->multiply = multiply;
     calculator->divide = divide;
+    calculator->store = store;
+    calculator->retrieve = retrieve;
+    calculator->clear = clear;
 
     return calculator;
 }
