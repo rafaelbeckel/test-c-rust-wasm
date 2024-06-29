@@ -32,7 +32,7 @@ The crates in this workspace experiment with different build strategies, with in
 
 6. [Rust Bindgen (WIP)](crates/6_rust_bindgen/)
 
-   - For projects that already use [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rus
+   - For projects that already use [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rust
 
 ## Future plans
 
