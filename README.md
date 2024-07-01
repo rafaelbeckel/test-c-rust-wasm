@@ -2,11 +2,11 @@
 
 This repository was created to test the current state of the Rust nightly compiler for producing a compatible C ABI for the `wasm32-unknown-unknown` target with `--Z wasm_c_abi=spec`.
 
-For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in `wasm-bindgen`.
+For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in Wasm Bingen.
 
 This workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
 
-To see the build strategies, check out the `build.sh` file in each of the crates in this workspace.
+To see how to do it, check out the `build.sh` file in each of the crates in this workspace.
 
 ## Build Strategies
 
@@ -54,7 +54,7 @@ Then, visit `http://localhost:3000` and click the example you want to see.
 
 2. Wgpu
 
-   - I have used these strategies in my work to build a `wgpu` project that depend on C libraries. I plan to bring a minimal example of it here.
+   - I have used these strategies in my work to build a `wgpu` project that depends on C libraries. I plan to bring a minimal example of it here.
 
 3. Combine different crates in a build script
 
@@ -66,7 +66,7 @@ Then, visit `http://localhost:3000` and click the example you want to see.
 
 ## Contributing
 
-If you you'd like to see any other scenario listed here, feel free to open an Issue or a PR.
+If you'd like to see any other scenario listed here, feel free to open an Issue or a PR.
 
 If submitting a new example, create a numbered subfolder in the `crates` directory following the existing structure, and ensure your example builds correctly for both WASM and unit tests.
 
