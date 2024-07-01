@@ -1,14 +1,16 @@
 # Rust+C in the same WASM binary
 
-I created this repository to test the current state of the Rust nightly compiler for producing a compatible C ABI for the `wasm32-unknown-unknown` target with `--Z wasm_c_abi=spec`.
+This repository was created to test the current state of the Rust nightly compiler for producing a compatible C ABI for the `wasm32-unknown-unknown` target with `--Z wasm_c_abi=spec`.
 
 For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in `wasm-bindgen`.
 
 This workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
 
+To see the build strategies, check out the `build.sh` file in each of the crates in this workspace.
+
 ## Build Strategies
 
-The crates in this workspace experiment with different build strategies, with increasing levels of complexity:
+The crates experiment with different build strategies, with increasing levels of complexity:
 
 1. [Linking Manually](crates/1_linking_manually)
 
@@ -34,15 +36,33 @@ The crates in this workspace experiment with different build strategies, with in
 
    - This project experiments with the nightly feature `extern types`.
 
+## Running it
+
+To see the examples in action, use your favorite local server:
+
+```bash
+npx serve
+```
+
+Then, visit `http://localhost:3000` and click the example you want to see.
+
 ## Future plans
 
 1. Uniffi
 
    - I plan to add an example with Uniffi in the future.
 
-2. Combine different crates in a build script
+2. Wgpu
+
+   - I have used these strategies in my work to build a `wgpu` project that depend on C libraries. I plan to bring a minimal example of it here.
+
+3. Combine different crates in a build script
 
    - C code coming from a crate and Rust code from another, link them by using linker flags in build.rs.
+
+4. External C libs
+
+   - Finally, let's bring an external C lib and combine all of the above.
 
 ## Contributing
 
