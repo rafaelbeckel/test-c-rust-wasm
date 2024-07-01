@@ -24,8 +24,8 @@
     <div id="wp_output"></div>
 
     <script type="module">
-      import env from "src/memory.js";
-      import init from "pkg/libc_calculator.js";
+      import env from "./src/memory.js";
+      import init from "./pkg/libc_calculator.js";
 
       const output = document.getElementById("output");
       const wp_output = document.getElementById("wp_output");
@@ -71,7 +71,7 @@
 
       // Option 2: instance from cargo build
       const { instance } = await WebAssembly.instantiateStreaming(
-        fetch("build/libc_calculator.wasm"),
+        fetch("./build/libc_calculator.wasm"),
         { env: env } // provides malloc and free
       );
 

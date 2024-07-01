@@ -29,7 +29,7 @@
       (async () => {
         // Look ma, Rust and C in the same WASM binary!
         const { instance } = await WebAssembly.instantiateStreaming(
-          fetch("build/advanced_maths.wasm")
+          fetch("./build/advanced_maths.wasm")
         );
 
         const wasm = instance.exports;

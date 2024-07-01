@@ -30,7 +30,7 @@
       const output = document.getElementById("output");
       const wp_output = document.getElementById("wp_output");
 
-      import init from "pkg/cc_calculator.js";
+      import init from "./pkg/cc_calculator.js";
 
       // Option 1: instance from wasm-pack
       (async () => {
@@ -59,7 +59,7 @@
 
       // Option 2: instance from cargo build
       const { instance } = await WebAssembly.instantiateStreaming(
-        fetch("build/cc_calculator.wasm")
+        fetch("./build/cc_calculator.wasm")
       );
 
       const wasm = instance.exports;
