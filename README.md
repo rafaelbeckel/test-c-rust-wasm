@@ -26,11 +26,11 @@ The crates in this workspace experiment with different build strategies, with in
 
    - We create a Calculator struct with member functions and export it with [Wasm Bindgen](https://github.com/rustwasm/wasm-bindgen)
 
-5. [Rust Bindgen](crates/6_rust_bindgen/)
+5. [Rust Bindgen](crates/5_rust_bindgen/)
 
    - This is the same as the previous project, but instead of writing the Calculator struct manually, we generate the Rust bindings from the C header with [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rust.
 
-6. [Extern Types](crates/5_extern_types/)
+6. [Extern Types](crates/6_extern_types/)
 
    - This project experiments with the nightly feature `extern types`.
 
