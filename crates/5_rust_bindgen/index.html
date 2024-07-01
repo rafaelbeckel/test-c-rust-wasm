@@ -12,13 +12,16 @@
       the same WASM binary, and make them call each other.
     </p>
 
-    <p>This example uses wasm-bindgen to generate a JS Calculator class.</p>
+    <p>
+      This example uses wasm-bindgen to generate a JS Calculator class, and Rust
+      Bindgen to generate the Rust bindings from the C header.
+    </p>
 
     <h2>Built with wasm-pack</h2>
     <div id="output"></div>
 
     <script type="module">
-      import init, { Calculator } from "/pkg/rbg_calculator.js";
+      import init, { Calculator } from "pkg/rbg_calculator.js";
 
       const output = document.getElementById("output");
 
