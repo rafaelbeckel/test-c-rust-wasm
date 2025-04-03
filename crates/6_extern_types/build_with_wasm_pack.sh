@@ -1,3 +1,5 @@
+set -e
+
 # As of June 2024, it is necessary to use nightly with the wasm_c_abi=spec
 # flag that was introduced in April.
 
