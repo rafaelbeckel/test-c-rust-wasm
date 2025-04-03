@@ -1,3 +1,5 @@
+set -e
+
 # Build Rust
 export RUSTFLAGS="--Z wasm_c_abi=spec"
 cargo +nightly build --target=wasm32-unknown-unknown --release
