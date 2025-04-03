@@ -3,6 +3,7 @@ fn main() {
     build.include("src");
     build.file("src/maths.c");
     build.compile("c_maths");
+    println!("cargo::rerun-if-changed=src/**");
 
     let out_dir = std::env::var("OUT_DIR").unwrap();
     println!("cargo::rustc-link-search=native={}", out_dir);
