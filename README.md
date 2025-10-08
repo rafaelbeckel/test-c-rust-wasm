@@ -1,10 +1,14 @@
 # Rust+C in the same WASM binary
 
-This repository was created to test the current state of the Rust nightly compiler for producing a compatible C ABI for the `wasm32-unknown-unknown` target with `--Z wasm_c_abi=spec`.
+This repository was originally created to test the state of Rust nightly for producing a compatible C ABI for the `wasm32-unknown-unknown` target with the flag `--Z wasm_c_abi=spec`.
 
-For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in Wasm Bingen.
+Now [Rust v1.89](https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/#standards-compliant-c-abi-on-the-wasm32-unknown-unknown-target) officially uses the "C" ABI by default.
 
-This workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
+For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in Wasm Bingen, and the [official Rust blog post](https://blog.rust-lang.org/2025/04/04/c-abi-changes-for-wasm32-unknown-unknown/) talking about this.
+
+## Description
+
+The workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
 
 To see how to do it, check out the `build.sh` file in each of the crates in this workspace.
 
@@ -36,7 +40,7 @@ The crates experiment with different build strategies, with increasing levels of
 
    - This project experiments with the nightly feature `extern types`.
 
-## Running it
+## Running
 
 To see the examples in action, use your favorite local server:
 
@@ -45,6 +49,17 @@ npx serve
 ```
 
 Then, visit `http://localhost:3000` and click the example you want to see.
+
+## Building
+
+Either visit the specific crate and run its `build.sh` script or use the `build_all.sh` script in the root of the workspace to build all crates at once.
+
+### Dependencies
+
+- [LLVM](https://llvm.org/)
+- [Clang](https://clang.llvm.org/)
+- [Rust](https://www.rust-lang.org/) (1.89 or later)
+- [Wasm Binary Toolkit](https://github.com/WebAssembly/wabt)
 
 ## Future plans
 

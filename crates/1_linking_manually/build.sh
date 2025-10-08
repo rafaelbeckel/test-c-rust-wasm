@@ -1,8 +1,7 @@
 set -e
 
 # Build Rust
-export RUSTFLAGS="--Z wasm_c_abi=spec"
-cargo +nightly build --target=wasm32-unknown-unknown --release
+cargo build --target=wasm32-unknown-unknown --release
 
 # Create a static library from the Rust build
 cp ../../target/wasm32-unknown-unknown/release/libwasm_ld_calculator.rlib build/r_maths.a

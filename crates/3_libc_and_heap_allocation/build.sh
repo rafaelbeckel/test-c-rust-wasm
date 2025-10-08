@@ -1,12 +1,6 @@
-# As of June 2024, it is necessary to use nightly with the wasm_c_abi=spec
-# flag that was introduced in April.
+set -e
 
-# The `spec` ABI will be the default compiler behavior in the future.
-# If the future has arrived and the flag is not necessary anymore,
-# please open an Issue or submit PR to update this script.
-
-export RUSTFLAGS="--Z wasm_c_abi=spec"
-cargo +nightly build --target=wasm32-unknown-unknown --release
+cargo build --target=wasm32-unknown-unknown --release
 
 cp ../../target/wasm32-unknown-unknown/release/libc_calculator.wasm build
 
