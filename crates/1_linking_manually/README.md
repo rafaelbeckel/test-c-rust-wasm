@@ -15,7 +15,7 @@ All methods are exported from a single `.wasm` file and can be called from JS.
 
 This crate demonstrates how to build and link Rust + C manually.
 
-Check out the `build.sh` script for the specific steps. You need llvm, clang, and Rust nightly.
+Check out the `build.sh` script for the specific steps. You need llvm, clang, and Rust.
 
 To see it working in your browser, use your preferred local server:
 

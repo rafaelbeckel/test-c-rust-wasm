@@ -31,7 +31,7 @@ All methods are exported to a single `.wasm` file and can be called from JS.
 
 ## Building
 
-As always, to ensure both ABIs are compatible, you must use Rust nightly and the `--Z wasm_c_abi=spec"` flag. Check out `build.sh` for an example.
+Check out `build.sh` for an example.
 
 This crate explores two build strategies:
 
@@ -40,7 +40,7 @@ This crate explores two build strategies:
 
 The `./build.sh` script will compile with **cargo** and output the results to the `/build` directory, then it will also call **wasm-pack** and output the results to the `/pkg` directory.
 
-To build this project yourself, you need **llvm**, **clang**, **Rust nightly**, and **wasm-pack**.
+To build this project yourself, you need **llvm**, **clang**, **Rust**, and **wasm-pack**.
 
 To see it working in your browser, use your preferred local server:
 
