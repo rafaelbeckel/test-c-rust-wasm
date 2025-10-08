@@ -1,3 +1,5 @@
+set -e
+
 # As of June 2024, it is necessary to use nightly with the wasm_c_abi=spec
 # flag that was introduced in April.
 
@@ -6,7 +8,7 @@
 # please open an Issue or submit PR to update this script.
 
 export RUSTFLAGS="--Z wasm_c_abi=spec"
-wasm-pack build --target web --release
+rustup run nightly wasm-pack build --target web --release
 
 # Replaces the import statement from 'env' to './env.js'
 sed -i '' "s/from 'env';/from '.\/env.js';/g" pkg/ext_t_calculator.js
