@@ -1,0 +1,17 @@
+[submodule "3rd-party/wasm32-libc/musl"]
+	path = 3rd-party/wasm32-libc/musl
+	url = https://git.musl-libc.org/git/musl
+	branch = v1.2.6
+	shallow = true
+
+[submodule "3rd-party/wasm32-libcxx/emscripten"]
+	path = 3rd-party/wasm32-libcxx/emscripten
+	url = https://github.com/emscripten-core/emscripten.git
+	branch = main
+	shallow = true
+
+[submodule "crates/9_capstone/zlib"]
+	path = crates/9_capstone/zlib
+	url = https://github.com/madler/zlib.git
+	branch = develop
+	shallow = true

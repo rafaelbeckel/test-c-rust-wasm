@@ -1,3 +1,29 @@
 [workspace]
-members = ["crates/*"]
+members = [
+    "3rd-party/wasm32-libc",
+    "3rd-party/wasm32-libcxx",
+    "crates/*",
+]
+# crates/6_extern_types is excluded from default-members because it uses the
+# nightly-only `extern_types` feature. Build it explicitly from its own
+# directory (where its rust-toolchain.toml selects nightly).
+default-members = [
+    "3rd-party/wasm32-libc",
+    "3rd-party/wasm32-libcxx",
+    "crates/1_linking_manually",
+    "crates/2_with_cc",
+    "crates/3_libc_and_heap_allocation",
+    "crates/4_wasm_bindgen",
+    "crates/5_rust_bindgen",
+    "crates/7_musl_libc",
+    "crates/8_llvm_libcxx",
+    "crates/9_capstone",
+]
 resolver = "2"
+
+[workspace.dependencies]
+cc = "1.2"
+bindgen = "0.72"
+cfg_aliases = "0.2"
+wasm-bindgen = "0.2"
+portable-atomic = "1.13"

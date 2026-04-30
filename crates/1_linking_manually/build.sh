@@ -1,5 +1,13 @@
 set -e
 
+# Ensure wasm-ld is in PATH (Homebrew lld is keg-only)
+if ! command -v wasm-ld &>/dev/null; then
+    LLD_PREFIX="$(brew --prefix lld@19 2>/dev/null || brew --prefix lld 2>/dev/null)"
+    if [ -n "$LLD_PREFIX" ] && [ -x "$LLD_PREFIX/bin/wasm-ld" ]; then
+        export PATH="$LLD_PREFIX/bin:$PATH"
+    fi
+fi
+
 # Build Rust
 cargo build --target=wasm32-unknown-unknown --release
 

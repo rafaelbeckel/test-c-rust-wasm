@@ -1,0 +1,37 @@
+//! Rust implementation of C library function `strcpy`
+//!
+//! Licensed under the Blue Oak Model Licence 1.0.0
+
+use crate::CChar;
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn strcpy(dest: *mut CChar, src: *const CChar) -> *const CChar {
+    unsafe {
+        let mut i = 0;
+        loop {
+            *dest.offset(i) = *src.offset(i);
+            let c = *dest.offset(i);
+            if c == 0 {
+                break;
+            }
+            i += 1;
+        }
+        dest
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn short() {
+        let src = b"hi\0";
+        let mut dest = *b"abcdef";
+        let result = unsafe { strcpy(dest.as_mut_ptr(), src.as_ptr()) };
+        assert_eq!(
+            unsafe { core::slice::from_raw_parts(result, 6) },
+            *b"hi\0def"
+        );
+    }
+}

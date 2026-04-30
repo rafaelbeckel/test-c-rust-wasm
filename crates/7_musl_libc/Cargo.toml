@@ -1,0 +1,17 @@
+[package]
+name = "musl_calculator"
+version = "0.1.0"
+edition = "2024"
+description = "Calculator using musl libc for wasm32-unknown-unknown (replaces OpenBSD libc)"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = { workspace = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm32-libc = { path = "../../3rd-party/wasm32-libc" }
+
+[build-dependencies]
+cc = { workspace = true }
