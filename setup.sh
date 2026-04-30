@@ -21,10 +21,14 @@ echo "  ✓ musl libc ready"
 echo ""
 
 # ─── 2. Emscripten (for LLVM libcxx) ─────────────────────────────────
-# Large repo. We use sparse checkout to only fetch what we need:
-#   system/lib/libcxx/
-#   system/lib/libcxxabi/
-#   system/lib/compiler-rt/
+# Large repo. We use sparse checkout to only fetch what the build.rs
+# scripts actually reference:
+#   system/include            – emscripten/wasm_simd128.h shims
+#   system/lib/libcxx         – libc++ sources
+#   system/lib/libcxxabi      – libc++abi sources
+#   system/lib/compiler-rt    – __trunctfdf2 etc.
+#   system/lib/libc           – arch/emscripten/bits/alltypes.h (used by wasm32-libc)
+#   system/lib/llvm-libc      – shared/fp_bits.h (used by libcxx/charconv.cpp)
 echo "→ Initializing emscripten submodule (sparse checkout)..."
 
 # Init without checkout
@@ -35,7 +39,13 @@ EMSCRIPTEN_DIR="$SCRIPT_DIR/3rd-party/wasm32-libcxx/emscripten"
 if [ -d "$EMSCRIPTEN_DIR/.git" ] || [ -f "$EMSCRIPTEN_DIR/.git" ]; then
     pushd "$EMSCRIPTEN_DIR" > /dev/null
     git sparse-checkout init --cone 2>/dev/null || true
-    git sparse-checkout set system/lib/libcxx system/lib/libcxxabi system/lib/compiler-rt
+    git sparse-checkout set \
+        system/include \
+        system/lib/libcxx \
+        system/lib/libcxxabi \
+        system/lib/compiler-rt \
+        system/lib/libc \
+        system/lib/llvm-libc
     git checkout 2>/dev/null || git checkout HEAD -- . 2>/dev/null || true
     popd > /dev/null
     echo "  ✓ emscripten libcxx ready (sparse checkout)"
