@@ -3,9 +3,11 @@ use std::{env, path::PathBuf};
 fn main() {
     let mut build = cc::Build::new();
 
-    if let Some(libc) = std::env::var_os("DEP_WASM32_UNKNOWN_UNKNOWN_OPENBSD_LIBC_INCLUDE") {
-        build.include(libc);
-        println!("cargo::rustc-link-lib=wasm32-unknown-unknown-openbsd-libc");
+    if let Ok(libc) = std::env::var("DEP_WASM32_LIBC_INCLUDE") {
+        for path in libc.split(':') {
+            build.include(path);
+        }
+        println!("cargo::rustc-link-lib=wasm32-libc");
     }
 
     build.include("src");

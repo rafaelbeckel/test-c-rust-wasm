@@ -9,11 +9,11 @@ crate-type = ["cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-wasm-bindgen = "0.2"
+wasm-bindgen = { workspace = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm32-unknown-unknown-openbsd-libc = "0.2"
+wasm32-libc = { path = "../../3rd-party/wasm32-libc" }
 
 [build-dependencies]
-cc = "1.0"
-bindgen = "0.69"
+cc = { workspace = true }
+bindgen = { workspace = true }

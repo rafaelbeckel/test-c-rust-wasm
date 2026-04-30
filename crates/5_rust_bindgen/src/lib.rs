@@ -1,12 +1,15 @@
 use wasm_bindgen::prelude::*;
 
+#[cfg(target_arch = "wasm32")]
+extern crate wasm32_libc;
+
 mod ffi {
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
 
     #[allow(dead_code)]
-    extern "C" {
+    unsafe extern "C" {
         pub fn add(left: u32, right: u32) -> u32;
         pub fn new_calculator() -> *mut Calculator;
         pub fn free_calculator(calculator: *mut Calculator);
@@ -102,7 +105,7 @@ impl Calculator {
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn subtract(left: u32, right: u32) -> u32 {
     if left < right {
         return 0;
@@ -111,7 +114,7 @@ pub extern "C" fn subtract(left: u32, right: u32) -> u32 {
     left - right
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn multiply(left: u32, right: u32) -> u32 {
     let mut result = 0;
     for _ in 0..right {

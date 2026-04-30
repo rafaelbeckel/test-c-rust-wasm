@@ -1,4 +1,8 @@
-extern "C" {
+// Force-link wasm32-libc so malloc/free are available to C code.
+#[cfg(target_arch = "wasm32")]
+extern crate wasm32_libc;
+
+unsafe extern "C" {
     pub fn add(left: usize, right: usize) -> usize;
     pub fn divide(left: usize, right: usize) -> usize;
     pub fn store(value: usize);
@@ -6,7 +10,7 @@ extern "C" {
     pub fn clear();
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 extern "C" fn subtract(left: usize, right: usize) -> usize {
     if left < right {
         return 0;
@@ -15,7 +19,7 @@ extern "C" fn subtract(left: usize, right: usize) -> usize {
     left - right
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 extern "C" fn multiply(left: usize, right: usize) -> usize {
     let mut result = 0;
     for _ in 0..right {
@@ -25,37 +29,37 @@ extern "C" fn multiply(left: usize, right: usize) -> usize {
     result
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_add(left: usize, right: usize) -> usize {
     unsafe { add(left, right) }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_subtract(left: usize, right: usize) -> usize {
     subtract(left, right)
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_multiply(left: usize, right: usize) -> usize {
     multiply(left, right)
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_divide(left: usize, right: usize) -> usize {
     unsafe { divide(left, right) }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_store(value: usize) {
     unsafe { store(value) }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_retrieve() -> usize {
     unsafe { retrieve() }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn calculator_clear() {
     unsafe { clear() }
 }

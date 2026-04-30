@@ -1,44 +1,71 @@
-# Rust+C in the same WASM binary
+# Rust+C/C++ in the same WASM binary
 
-This repository was originally created to test the state of Rust nightly for producing a compatible C ABI for the `wasm32-unknown-unknown` target with the flag `--Z wasm_c_abi=spec`.
+A workspace of progressive examples showing how to produce a single WASM binary that combines Rust, C, and C++ code — from manual linking all the way to integrating real external libraries with a full C/C++ standard library.
 
-Now [Rust v1.89](https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/#standards-compliant-c-abi-on-the-wasm32-unknown-unknown-target) officially uses the "C" ABI by default.
+## Context
 
-For context, this is the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in Wasm Bingen, and the [official Rust blog post](https://blog.rust-lang.org/2025/04/04/c-abi-changes-for-wasm32-unknown-unknown/) talking about this.
+As of [Rust v1.89](https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/#standards-compliant-c-abi-on-the-wasm32-unknown-unknown-target) (August 2025), the `wasm32-unknown-unknown` target officially uses the standards-compliant C ABI by default. This means C and Rust code compiled to WASM can call each other without any special flags.
 
-## Description
-
-The workspace contains a series of small examples of how to produce a single WASM binary with both C and Rust code that can call each other.
-
-To see how to do it, check out the `build.sh` file in each of the crates in this workspace.
+For historical context, see the [relevant tracking issue](https://github.com/rustwasm/wasm-bindgen/issues/3454) in wasm-bindgen and the [official Rust blog post](https://blog.rust-lang.org/2025/04/04/c-abi-changes-for-wasm32-unknown-unknown/) about this change.
 
 ## Build Strategies
 
 The crates experiment with different build strategies, with increasing levels of complexity:
 
-1. [Linking Manually](crates/1_linking_manually)
+### Minimal Examples (no external dependencies)
 
-   - A simple calculator with primitive data types and manual build
+1. **[Linking Manually](crates/1_linking_manually)** — A simple calculator with primitive data types and manual build using `wasm-ld`.
 
-2. [With CC Crate](crates/2_with_cc)
+2. **[With CC Crate](crates/2_with_cc)** — The same calculator built with the [CC crate](https://docs.rs/cc/latest/cc/).
 
-   - The same calculator built with the [CC crate](https://docs.rs/cc/1.0.101/cc/)
+### With Musl Libc (require `./setup.sh`)
 
-3. [Libc and Heap](crates/3_libc_and_heap_allocation)
+All crates from 3 onwards use [musl libc](https://musl.libc.org/) (v1.2.6) compiled for `wasm32-unknown-unknown`, providing a full C standard library (`malloc`/`free`, `printf`/`snprintf`, string operations, etc.).
 
-   - We use [OpenBSD libc](https://github.com/trevyn/wasm32-unknown-unknown-openbsd-libc) to implement the Mem function in the calculator and store/free a value in the heap from C with `malloc` and `free`
+3. **[Libc and Heap](crates/3_libc_and_heap_allocation)** — Adds heap allocation (`malloc`/`free`) via musl libc.
 
-4. [Wasm Bindgen](crates/4_wasm_bindgen/)
+4. **[Wasm Bindgen](crates/4_wasm_bindgen/)** — We create a Calculator struct with member functions and export it with [wasm-bindgen](https://github.com/nicknisi/wasm-bindgen).
 
-   - We create a Calculator struct with member functions and export it with [Wasm Bindgen](https://github.com/rustwasm/wasm-bindgen)
+5. **[Rust Bindgen](crates/5_rust_bindgen/)** — Same as above, but we generate the Rust bindings from the C header with [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/).
 
-5. [Rust Bindgen](crates/5_rust_bindgen/)
+6. **[Extern Types](crates/6_extern_types/)** — Experiments with the nightly feature `extern types`.
 
-   - This is the same as the previous project, but instead of writing the Calculator struct manually, we generate the Rust bindings from the C header with [Rust Bindgen](https://rust-lang.github.io/rust-bindgen/), which is the recommended way to interact with C code from Rust.
+7. **[Musl Libc (full demo)](crates/7_musl_libc/)** — A more complete calculator that exercises musl's `snprintf` for formatted output. Demonstrates the pattern used in production for integrating real-world C libraries.
 
-6. [Extern Types](crates/6_extern_types/)
+8. **[LLVM Libc++](crates/8_llvm_libcxx/)** — Adds [LLVM's libc++](https://libcxx.llvm.org/) on top of musl libc, enabling C++ standard library features (`std::vector`, `std::string`, `<algorithm>`, etc.) in WASM. The C++ Calculator class demonstrates how to wrap C++ objects with a C API for Rust FFI. Build configuration mirrors [emscripten's system_libs.py](https://github.com/emscripten-core/emscripten/blob/main/tools/system_libs.py).
 
-   - This project experiments with the nightly feature `extern types`.
+9. **[Capstone: zlib](crates/9_capstone/)** — Integrates a real, unmodified external C library ([zlib](https://zlib.net/)) compiled from source. Demonstrates the full production pattern: external C library + musl libc + safe Rust wrappers + wasm-bindgen export.
+
+## Setup
+
+### Crates 1–2 (minimal)
+
+No setup required. Just build:
+
+```bash
+cd crates/1_linking_manually && ./build.sh
+```
+
+### Crates 3–9 (require submodules)
+
+Initialize the git submodules first, then build:
+
+```bash
+# Initialize submodules (musl, emscripten libcxx, zlib)
+./setup.sh
+
+# Build everything
+./build_all.sh
+
+# Or build a specific crate
+cd crates/4_wasm_bindgen && ./build.sh
+```
+
+### Dependencies
+
+All examples require [LLVM](https://llvm.org/), [Clang](https://clang.llvm.org/), [Rust](https://www.rust-lang.org/) (nightly toolchain), and [wasm-pack](https://rustwasm.github.io/wasm-pack/).
+
+For inspecting outputs: [Wasm Binary Toolkit](https://github.com/nicknisi/wabt) (`wasm2wat`).
 
 ## Running
 
@@ -48,36 +75,36 @@ To see the examples in action, use your favorite local server:
 npx serve
 ```
 
-Then, visit `http://localhost:3000` and click the example you want to see.
+Then visit `http://localhost:3000` and click the example you want to see.
 
-## Building
+## Architecture
 
-Either visit the specific crate and run its `build.sh` script or use the `build_all.sh` script in the root of the workspace to build all crates at once.
+### How the C/C++ standard libraries work
 
-### Dependencies
+The `3rd-party/` directory contains two Rust crates that compile and link the C/C++ standard libraries for `wasm32-unknown-unknown`:
 
-- [LLVM](https://llvm.org/)
-- [Clang](https://clang.llvm.org/)
-- [Rust](https://www.rust-lang.org/) (1.89 or later)
-- [Wasm Binary Toolkit](https://github.com/WebAssembly/wabt)
+```
+3rd-party/
+├── wasm32-libc/         # Musl libc compiled for wasm32
+│   ├── musl/            # ← git submodule (https://git.musl-libc.org/cgit/musl)
+│   ├── src/ffi/         # Rust implementations of C stdlib functions
+│   └── build.rs         # Compiles musl + generates Rust bindings
+│
+└── wasm32-libcxx/       # LLVM libc++ compiled for wasm32
+    ├── emscripten/      # ← git submodule (https://github.com/emscripten-core/emscripten)
+    └── build.rs         # Compiles libcxx + libcxxabi from emscripten sources
+```
 
-## Future plans
+The wasm32-libcxx crate depends on wasm32-libc (C++ needs a C library underneath). Consumer crates declare these as Cargo dependencies, and header paths are propagated via Cargo's `DEP_*_INCLUDE` environment variables.
 
-1. Uniffi
+### Dependency chain for crate 9
 
-   - I plan to add an example with Uniffi in the future.
-
-2. Wgpu
-
-   - I have used these strategies in my work to build a `wgpu` project that depends on C libraries. I plan to bring a minimal example of it here.
-
-3. Combine different crates in a build script
-
-   - C code coming from a crate and Rust code from another, link them by using linker flags in build.rs.
-
-4. External C libs
-
-   - Finally, let's bring an external C lib and combine all of the above.
+```
+zlib_compression (Rust crate)
+├── zlib (external C library, compiled from source)
+├── wasm32-libc (musl libc for wasm32)
+└── wasm-bindgen (JS interop)
+```
 
 ## Contributing
 

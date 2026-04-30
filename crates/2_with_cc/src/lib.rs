@@ -1,23 +1,23 @@
 // https://github.com/rust-lang/rfcs/issues/2771
 
 mod ffi {
-    extern "C" {
+    unsafe extern "C" {
         pub(super) fn _add(left: usize, right: usize) -> usize;
         pub(super) fn _divide(left: usize, right: usize) -> usize;
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn add(left: usize, right: usize) -> usize {
     unsafe { ffi::_add(left, right) }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn divide(left: usize, right: usize) -> usize {
     unsafe { ffi::_divide(left, right) }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn subtract(left: usize, right: usize) -> usize {
     if left < right {
         return 0;
@@ -26,7 +26,7 @@ pub extern "C" fn subtract(left: usize, right: usize) -> usize {
     left - right
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn multiply(left: usize, right: usize) -> usize {
     let mut result = 0;
     for _ in 0..right {
