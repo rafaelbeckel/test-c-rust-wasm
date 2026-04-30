@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 
 [build-dependencies]
-cc = "1.0"
+cc = { workspace = true }

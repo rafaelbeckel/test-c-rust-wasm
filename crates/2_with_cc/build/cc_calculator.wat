@@ -8,16 +8,6 @@
     local.get 0
     local.get 1
     call $_divide)
-  (func $subtract (type 0) (param i32 i32) (result i32)
-    i32.const 0
-    local.get 0
-    local.get 1
-    i32.sub
-    local.tee 1
-    local.get 1
-    local.get 0
-    i32.gt_u
-    select)
   (func $multiply (type 0) (param i32 i32) (result i32)
     (local i32)
     i32.const 0
@@ -39,6 +29,16 @@
       end
     end
     local.get 2)
+  (func $subtract (type 0) (param i32 i32) (result i32)
+    i32.const 0
+    local.get 0
+    local.get 1
+    i32.sub
+    local.tee 1
+    local.get 1
+    local.get 0
+    i32.gt_u
+    select)
   (func $_add (type 0) (param i32 i32) (result i32)
     local.get 1
     local.get 0
@@ -79,7 +79,7 @@
   (export "memory" (memory 0))
   (export "add" (func $add))
   (export "divide" (func $divide))
-  (export "subtract" (func $subtract))
   (export "multiply" (func $multiply))
+  (export "subtract" (func $subtract))
   (export "__data_end" (global 1))
   (export "__heap_base" (global 2)))

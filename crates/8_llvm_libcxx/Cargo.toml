@@ -1,0 +1,18 @@
+[package]
+name = "libcxx_calculator"
+version = "0.1.0"
+edition = "2024"
+description = "Calculator with C++ class via LLVM libc++ (depends on musl libc)"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = { workspace = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm32-libc = { path = "../../3rd-party/wasm32-libc" }
+wasm32-libcxx = { path = "../../3rd-party/wasm32-libcxx" }
+
+[build-dependencies]
+cc = { workspace = true }

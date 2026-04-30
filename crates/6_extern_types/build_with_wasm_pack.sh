@@ -1,6 +1,6 @@
 set -e
 
-rustup run wasm-pack build --target web --release
+wasm-pack build --target web --release
 
 # Replaces the import statement from 'env' to './env.js'
 sed -i '' "s/from 'env';/from '.\/env.js';/g" pkg/ext_t_calculator.js

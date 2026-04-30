@@ -1,6 +1,6 @@
 set -e
 
-rustup run wasm-pack build --target web --release
+wasm-pack build --target web --release
 
 cp src/memory.js pkg/env.js
 
