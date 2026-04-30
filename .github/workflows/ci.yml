@@ -42,11 +42,15 @@ jobs:
               wget gnupg software-properties-common wabt
           wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- "$LLVM_VERSION"
           sudo apt-get install -y --no-install-recommends "lld-$LLVM_VERSION"
-          # Make the unsuffixed clang/clang++/wasm-ld resolve to the new versions.
-          sudo update-alternatives --install /usr/bin/clang   clang   "/usr/bin/clang-$LLVM_VERSION"   100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ "/usr/bin/clang++-$LLVM_VERSION" 100
-          sudo update-alternatives --install /usr/bin/wasm-ld wasm-ld "/usr/bin/wasm-ld-$LLVM_VERSION" 100
+          # The default `clang` is a real binary, not an `update-alternatives`
+          # link, so just symlink the new versions on top of /usr/local/bin
+          # (which is earlier on PATH than /usr/bin).
+          sudo ln -sf "/usr/bin/clang-$LLVM_VERSION"   /usr/local/bin/clang
+          sudo ln -sf "/usr/bin/clang++-$LLVM_VERSION" /usr/local/bin/clang++
+          sudo ln -sf "/usr/bin/wasm-ld-$LLVM_VERSION" /usr/local/bin/wasm-ld
+          # Sanity check.
           clang --version
+          clang++ --version
           wasm-ld --version
 
       - name: Install Rust stable (workspace default)
