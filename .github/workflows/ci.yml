@@ -29,11 +29,24 @@ jobs:
         # We don't use `submodules: true` here — setup.sh does sparse checkout
         # for emscripten (large repo), which the standard checkout can't do.
 
-      - name: Install LLVM, lld, wabt
+      - name: Install LLVM 19 (clang + lld) and wabt
+        env:
+          LLVM_VERSION: "19"
         run: |
+          # Ubuntu's default clang/lld lag behind what emscripten's libcxx
+          # headers need (e.g. crate 8 fails on clang 18 with template
+          # errors in <type_traits>). Use LLVM's official apt repo for a
+          # newer toolchain.
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clang lld wabt
-          # `wasm-ld` ships with the `lld` package and is needed by build.sh.
+          sudo apt-get install -y --no-install-recommends \
+              wget gnupg software-properties-common wabt
+          wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- "$LLVM_VERSION"
+          sudo apt-get install -y --no-install-recommends "lld-$LLVM_VERSION"
+          # Make the unsuffixed clang/clang++/wasm-ld resolve to the new versions.
+          sudo update-alternatives --install /usr/bin/clang   clang   "/usr/bin/clang-$LLVM_VERSION"   100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ "/usr/bin/clang++-$LLVM_VERSION" 100
+          sudo update-alternatives --install /usr/bin/wasm-ld wasm-ld "/usr/bin/wasm-ld-$LLVM_VERSION" 100
+          clang --version
           wasm-ld --version
 
       - name: Install Rust stable (workspace default)
