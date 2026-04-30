@@ -2,12 +2,14 @@
 //!
 //! Licensed under the Blue Oak Model Licence 1.0.0
 
-use crate::{strcpy, strlen, CChar};
+use crate::{CChar, strcpy, strlen};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn strcat(dest: *mut CChar, src: *const CChar) -> *const CChar {
-    strcpy(dest.add(strlen(dest)), src);
-    dest
+    unsafe {
+        strcpy(dest.add(strlen(dest)), src);
+        dest
+    }
 }
 
 #[cfg(test)]
@@ -19,6 +21,9 @@ mod test {
         let mut dest = *b"hello\0......";
         let src = *b" world\0";
         let result = unsafe { strcat(dest.as_mut_ptr(), src.as_ptr()) };
-        assert_eq!(unsafe { core::slice::from_raw_parts(result, 12) }, b"hello world\0");
+        assert_eq!(
+            unsafe { core::slice::from_raw_parts(result, 12) },
+            b"hello world\0"
+        );
     }
 }

@@ -33,7 +33,7 @@ fn collect_cpp(dir: &str, exclude: &[&str], out: &mut Vec<String>) {
             collect_cpp(&path.display().to_string(), exclude, out);
         } else if path.extension().is_some_and(|ext| ext == "cpp") {
             let name = path.file_name().unwrap().to_str().unwrap();
-            if !exclude.iter().any(|e| *e == name) {
+            if !exclude.contains(&name) {
                 out.push(path.display().to_string());
             }
         }
@@ -41,7 +41,7 @@ fn collect_cpp(dir: &str, exclude: &[&str], out: &mut Vec<String>) {
 }
 
 fn main() {
-    if !env::var("TARGET").map_or(false, |t| t.starts_with("wasm")) {
+    if !env::var("TARGET").is_ok_and(|t| t.starts_with("wasm")) {
         return;
     }
 

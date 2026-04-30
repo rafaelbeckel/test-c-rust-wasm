@@ -1,45 +1,10 @@
 mod ffi;
 pub use ffi::*;
 
-#[cfg(wasm)]
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn getenv(s: *const CChar) -> CInt {
-    let s = std::ffi::CStr::from_ptr(s as *const i8);
-    let s = s.to_str().unwrap();
-    match std::env::var(s) {
-        Ok(_) => 1,
-        Err(_) => 0,
-    }
-}
-
-static __ERRNO_STORAGE: CInt = 0;
-
-#[cfg(wasm)]
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn __errno_location() -> *const CInt {
-    &__ERRNO_STORAGE
-}
-
-#[cfg(wasm)]
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn puts(s: *const u8) -> *const CInt {
-    let mut string = String::new();
-
-    let mut i = 0;
-    loop {
-        let c = *s.add(i);
-        if c == 0 {
-            break;
-        }
-        string.push(c as char);
-        i += 1;
-    }
-    string.push('\n');
-
-    println!("{}", string);
-
-    0 as *const CInt
-}
+// `__errno_location` is defined in C (src/errno.c) with the correct
+// `int *` signature. `puts` and `getenv` are not provided here — if
+// any linked C/C++ code references them, the link will fail loudly
+// rather than silently call a wrong-ABI shim.
 
 #[cfg(wasm)]
 #[unsafe(no_mangle)]

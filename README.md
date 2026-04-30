@@ -63,7 +63,7 @@ cd crates/4_wasm_bindgen && ./build.sh
 
 ### Dependencies
 
-All examples require [LLVM](https://llvm.org/), [Clang](https://clang.llvm.org/), [Rust](https://www.rust-lang.org/) (nightly toolchain), and [wasm-pack](https://rustwasm.github.io/wasm-pack/).
+All examples require [LLVM](https://llvm.org/), [Clang](https://clang.llvm.org/), [Rust](https://www.rust-lang.org/) (stable), and [wasm-pack](https://rustwasm.github.io/wasm-pack/). Crate 6 (`extern_types`) additionally needs the nightly toolchain — its own `rust-toolchain.toml` selects it automatically when you `cd` into that crate.
 
 For inspecting outputs: [Wasm Binary Toolkit](https://github.com/nicknisi/wabt) (`wasm2wat`).
 
@@ -112,4 +112,4 @@ If you'd like to see any other scenario listed here, feel free to open an Issue 
 
 If submitting a new example, create a numbered subfolder in the `crates` directory following the existing structure, and ensure your example builds correctly for both WASM and unit tests.
 
-Finally, run `cargo clippy` and stick with the default rules.
+Finally, run `cargo clippy` and stick with the default rules. CI runs `cargo fmt --check`, `cargo clippy -D warnings`, `cargo test`, and `./build_all.sh` on every pull request — see [.github/workflows/ci.yml](.github/workflows/ci.yml).

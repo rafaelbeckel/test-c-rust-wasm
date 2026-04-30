@@ -7,21 +7,32 @@ use crate::{CChar, CStringIter};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn strstr(haystack: *const CChar, needle: *const CChar) -> *const CChar {
-    if *needle.offset(0) == 0 { return haystack; }
-    for haystack_trim in (0..).map(|idx| haystack.offset(idx)) {
-        if *haystack_trim == 0 { break; }
-        let mut len = 0;
-        for (inner_idx, nec) in CStringIter::new(needle).enumerate() {
-            let hsc = *haystack_trim.add(inner_idx);
-            if hsc != nec { break; }
-            len += 1;
+    unsafe {
+        if *needle.offset(0) == 0 {
+            return haystack;
         }
-        if *needle.offset(len) == 0 { return haystack_trim; }
+        for haystack_trim in (0..).map(|idx| haystack.offset(idx)) {
+            if *haystack_trim == 0 {
+                break;
+            }
+            let mut len = 0;
+            for (inner_idx, nec) in CStringIter::new(needle).enumerate() {
+                let hsc = *haystack_trim.add(inner_idx);
+                if hsc != nec {
+                    break;
+                }
+                len += 1;
+            }
+            if *needle.offset(len) == 0 {
+                return haystack_trim;
+            }
+        }
+        core::ptr::null()
     }
-    core::ptr::null()
 }
 
 #[cfg(test)]
+#[allow(clippy::manual_c_str_literals)]
 mod test {
     use super::*;
 

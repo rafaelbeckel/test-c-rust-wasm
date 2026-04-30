@@ -7,26 +7,39 @@ use crate::{CChar, CInt};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn strchr(haystack: *const CChar, needle: CInt) -> *const CChar {
-    for idx in 0.. {
-        let ptr = haystack.offset(idx);
-        if needle == (*ptr) as CInt { return ptr; }
-        if (*ptr) == 0 { break; }
+    unsafe {
+        for idx in 0.. {
+            let ptr = haystack.offset(idx);
+            if needle == (*ptr) as CInt {
+                return ptr;
+            }
+            if (*ptr) == 0 {
+                break;
+            }
+        }
+        core::ptr::null()
     }
-    core::ptr::null()
 }
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn strrchr(haystack: *const CChar, needle: CInt) -> *const CChar {
-    let mut last = core::ptr::null();
-    for idx in 0.. {
-        let ptr = haystack.offset(idx);
-        if needle == (*ptr) as CInt { last = ptr; }
-        if (*ptr) == 0 { break; }
+    unsafe {
+        let mut last = core::ptr::null();
+        for idx in 0.. {
+            let ptr = haystack.offset(idx);
+            if needle == (*ptr) as CInt {
+                last = ptr;
+            }
+            if (*ptr) == 0 {
+                break;
+            }
+        }
+        last
     }
-    last
 }
 
 #[cfg(test)]
+#[allow(clippy::manual_c_str_literals)]
 mod test {
     use super::*;
 

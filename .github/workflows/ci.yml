@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# Cancel in-progress runs when a new commit is pushed to the same PR/branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  ci:
+    name: Build, Lint, Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        # We don't use `submodules: true` here — setup.sh does sparse checkout
+        # for emscripten (large repo), which the standard checkout can't do.
+
+      - name: Install LLVM, lld, wabt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang lld wabt
+          # `wasm-ld` ships with the `lld` package and is needed by build.sh.
+          wasm-ld --version
+
+      - name: Install Rust stable (workspace default)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: clippy, rustfmt
+
+      - name: Install Rust nightly (only used by crates/6_extern_types)
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: wasm32-unknown-unknown
+          components: clippy, rustfmt
+
+      - name: Cache Cargo & target dirs
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          version: latest
+
+      - name: Initialize submodules (musl, emscripten libcxx, zlib)
+        run: ./setup.sh
+
+      # ── Lint ──────────────────────────────────────────────────────────
+      - name: cargo fmt (all crates)
+        run: cargo fmt --all --check
+
+      - name: cargo clippy (workspace, stable)
+        run: >
+          cargo clippy
+          --workspace --exclude ext_t_calculator
+          --all-targets
+          -- -D warnings
+
+      - name: cargo clippy (crate 6, nightly)
+        working-directory: crates/6_extern_types
+        run: cargo clippy --all-targets -- -D warnings
+
+      # ── Host tests ────────────────────────────────────────────────────
+      - name: cargo test (workspace, stable)
+        run: cargo test --workspace --exclude ext_t_calculator
+
+      - name: cargo test (crate 6, nightly)
+        working-directory: crates/6_extern_types
+        run: cargo test
+
+      # ── Build all 9 crates for wasm32-unknown-unknown ─────────────────
+      - name: Build all crates (build_all.sh)
+        run: ./build_all.sh

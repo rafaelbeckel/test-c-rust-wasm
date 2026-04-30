@@ -21,27 +21,27 @@ extern "C" {
 typedef struct CxxCalculator CxxCalculator;
 
 // Factory
-CxxCalculator *calculator_new();
-void calculator_free(CxxCalculator *calc);
+CxxCalculator *cpp_calc_new();
+void cpp_calc_free(CxxCalculator *calc);
 
 // Arithmetic
-unsigned int calculator_add(CxxCalculator *calc, unsigned int a, unsigned int b);
-unsigned int calculator_subtract(CxxCalculator *calc, unsigned int a, unsigned int b);
-unsigned int calculator_multiply(CxxCalculator *calc, unsigned int a, unsigned int b);
-unsigned int calculator_divide(CxxCalculator *calc, unsigned int a, unsigned int b);
+unsigned int cpp_calc_add(CxxCalculator *calc, unsigned int a, unsigned int b);
+unsigned int cpp_calc_subtract(CxxCalculator *calc, unsigned int a, unsigned int b);
+unsigned int cpp_calc_multiply(CxxCalculator *calc, unsigned int a, unsigned int b);
+unsigned int cpp_calc_divide(CxxCalculator *calc, unsigned int a, unsigned int b);
 
 // Memory
-void calculator_store(CxxCalculator *calc, unsigned int value);
-unsigned int calculator_retrieve(CxxCalculator *calc);
-void calculator_clear(CxxCalculator *calc);
+void cpp_calc_store(CxxCalculator *calc, unsigned int value);
+unsigned int cpp_calc_retrieve(CxxCalculator *calc);
+void cpp_calc_clear(CxxCalculator *calc);
 
 // History (requires std::vector from libc++)
-unsigned int calculator_history_count(CxxCalculator *calc);
-unsigned int calculator_history_get(CxxCalculator *calc, unsigned int index);
-void calculator_history_clear(CxxCalculator *calc);
+unsigned int cpp_calc_history_count(CxxCalculator *calc);
+unsigned int cpp_calc_history_get(CxxCalculator *calc, unsigned int index);
+void cpp_calc_history_clear(CxxCalculator *calc);
 
 // Formatting (requires std::string from libc++)
-int calculator_format_last(CxxCalculator *calc, char *buf, unsigned int buf_len);
+int cpp_calc_format_last(CxxCalculator *calc, char *buf, unsigned int buf_len);
 
 // Defined in Rust
 unsigned int rust_subtract(unsigned int a, unsigned int b);

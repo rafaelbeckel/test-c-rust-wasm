@@ -6,18 +6,26 @@
 use crate::CChar;
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn strncpy(dest: *mut CChar, src: *const CChar, count: usize) -> *const CChar {
-    let mut i = 0;
-    while i < count {
-        let c = *src.add(i);
-        *dest.add(i) = c;
-        i += 1;
-        if c == 0 { break; }
+pub unsafe extern "C" fn strncpy(
+    dest: *mut CChar,
+    src: *const CChar,
+    count: usize,
+) -> *const CChar {
+    unsafe {
+        let mut i = 0;
+        while i < count {
+            let c = *src.add(i);
+            *dest.add(i) = c;
+            i += 1;
+            if c == 0 {
+                break;
+            }
+        }
+        for j in i..count {
+            *dest.add(j) = 0;
+        }
+        dest
     }
-    for j in i..count {
-        *dest.add(j) = 0;
-    }
-    dest
 }
 
 #[cfg(test)]
@@ -29,7 +37,10 @@ mod test {
         let src = b"hi\0";
         let mut dest = *b"abcdef";
         let result = unsafe { strncpy(dest.as_mut_ptr(), src.as_ptr(), 5) };
-        assert_eq!(unsafe { core::slice::from_raw_parts(result, 6) }, *b"hi\0\0\0f");
+        assert_eq!(
+            unsafe { core::slice::from_raw_parts(result, 6) },
+            *b"hi\0\0\0f"
+        );
     }
 
     #[test]

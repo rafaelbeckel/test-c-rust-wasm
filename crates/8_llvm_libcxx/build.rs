@@ -36,5 +36,5 @@ fn main() {
     cpp_build.file("src/calculator.cpp");
     cpp_build.compile("cpp_calculator");
 
-    println!("cargo::rerun-if-changed=src/**");
+    println!("cargo::rerun-if-changed=src");
 }

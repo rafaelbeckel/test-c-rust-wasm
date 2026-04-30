@@ -4,17 +4,21 @@
 //! Licensed under the Blue Oak Model Licence 1.0.0
 
 #[cfg(test)]
+#[allow(clippy::manual_c_str_literals)]
 mod test {
     unsafe extern "C" {
         fn snprintf(buf: *mut CChar, len: usize, fmt: *const CChar, ...) -> i32;
     }
 
-    use crate::{strcmp, CChar, CInt, CLong, CLongLong, CUInt, CULong, CULongLong};
+    use crate::{CChar, CInt, CLong, CLongLong, CUInt, CULong, CULongLong, strcmp};
 
     #[test]
     fn plain_string() {
         let mut buf = [b'\0'; 32];
-        assert_eq!(unsafe { snprintf(buf.as_mut_ptr(), buf.len(), "Hi\0".as_ptr()) }, 2);
+        assert_eq!(
+            unsafe { snprintf(buf.as_mut_ptr(), buf.len(), "Hi\0".as_ptr()) },
+            2
+        );
         assert_eq!(unsafe { strcmp(buf.as_ptr(), b"Hi\0" as *const u8) }, 0);
     }
 
@@ -22,9 +26,20 @@ mod test {
     fn strings() {
         let mut buf = [b'\0'; 32];
         assert_eq!(
-            unsafe { snprintf(buf.as_mut_ptr(), buf.len(), "%s, %s!\0".as_ptr(), "Hello\0".as_ptr(), "World\0".as_ptr()) },
+            unsafe {
+                snprintf(
+                    buf.as_mut_ptr(),
+                    buf.len(),
+                    "%s, %s!\0".as_ptr(),
+                    "Hello\0".as_ptr(),
+                    "World\0".as_ptr(),
+                )
+            },
             13,
         );
-        assert_eq!(unsafe { strcmp(buf.as_ptr(), b"Hello, World!\0" as *const u8) }, 0);
+        assert_eq!(
+            unsafe { strcmp(buf.as_ptr(), b"Hello, World!\0" as *const u8) },
+            0
+        );
     }
 }
