@@ -35,17 +35,25 @@ fn default_handler(_sig: i32) {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn signal(sig: i32, handler: SignalHandler) -> SignalHandler {
-    if !SIGNALS.contains(&sig) { return SIG_ERR; }
+    if !SIGNALS.contains(&sig) {
+        return SIG_ERR;
+    }
     SIGNAL_HANDLERS[sig as usize].swap(handler, Ordering::Relaxed)
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn raise(sig: i32) -> i32 {
-    if !SIGNALS.contains(&sig) { return -1; }
+    if !SIGNALS.contains(&sig) {
+        return -1;
+    }
     let handler = SIGNAL_HANDLERS[sig as usize].load(Ordering::Relaxed);
     match handler {
-        SIG_DFL => { default_handler(sig); }
-        SIG_IGN => { ignore_handler(sig); }
+        SIG_DFL => {
+            default_handler(sig);
+        }
+        SIG_IGN => {
+            ignore_handler(sig);
+        }
         _ => unsafe {
             let handler_fn: unsafe extern "C" fn(core::ffi::c_int) = core::mem::transmute(handler);
             handler_fn(sig);

@@ -24,8 +24,7 @@ mod ffi {
         pub store: unsafe extern "C" fn(number: usize),
         pub retrieve: unsafe extern "C" fn() -> usize,
         pub clear: unsafe extern "C" fn(),
-        pub format_result:
-            unsafe extern "C" fn(value: usize, buf: *mut u8, buf_len: usize) -> i32,
+        pub format_result: unsafe extern "C" fn(value: usize, buf: *mut u8, buf_len: usize) -> i32,
     }
 }
 
@@ -87,11 +86,12 @@ impl Calculator {
     /// that was not available with the OpenBSD libc shim.
     pub fn format_result(&self, value: usize) -> String {
         let mut buf = vec![0u8; 64];
-        let len = unsafe {
-            ((*self.calculator).format_result)(value, buf.as_mut_ptr(), buf.len())
-        };
+        let len = unsafe { ((*self.calculator).format_result)(value, buf.as_mut_ptr(), buf.len()) };
         if len > 0 {
-            buf.truncate(len as usize);
+            // snprintf returns the would-have-written length, which can
+            // exceed the buffer on truncation — clamp before slicing.
+            let written = (len as usize).min(buf.len());
+            buf.truncate(written);
             String::from_utf8_lossy(&buf).into_owned()
         } else {
             String::new()

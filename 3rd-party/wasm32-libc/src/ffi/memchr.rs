@@ -6,13 +6,15 @@ use crate::{CChar, CInt, CSizeT, CVoid};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn memchr(s: *const CVoid, c: CInt, n: CSizeT) -> *const CVoid {
-    let s = s as *const CChar;
-    for i in 0..n {
-        if *s.add(i) as CInt == c {
-            return s.add(i) as *const CVoid;
+    unsafe {
+        let s = s as *const CChar;
+        for i in 0..n {
+            if *s.add(i) as CInt == c {
+                return s.add(i) as *const CVoid;
+            }
         }
+        core::ptr::null()
     }
-    core::ptr::null()
 }
 
 #[cfg(test)]
@@ -20,7 +22,9 @@ mod test {
     use super::*;
 
     #[test]
-    fn null() { unsafe { assert_eq!(memchr(core::ptr::null(), 0, 0), core::ptr::null()) }; }
+    fn null() {
+        unsafe { assert_eq!(memchr(core::ptr::null(), 0, 0), core::ptr::null()) };
+    }
 
     #[test]
     fn normal() {

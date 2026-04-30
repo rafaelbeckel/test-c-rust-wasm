@@ -16,10 +16,10 @@ pub type CLongLong = ::core::ffi::c_longlong;
 pub type CULongLong = ::core::ffi::c_ulonglong;
 
 /// `intmax_t`
-pub type CUIntMax = CULongLong;
+pub type CIntMax = CLongLong;
 
 /// `uintmax_t`
-pub type CIntMax = CLongLong;
+pub type CUIntMax = CULongLong;
 
 /// `long int`
 pub type CLong = ::core::ffi::c_long;

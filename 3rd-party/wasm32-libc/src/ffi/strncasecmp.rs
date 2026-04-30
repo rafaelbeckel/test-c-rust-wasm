@@ -6,13 +6,17 @@ use crate::{CChar, CInt};
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn strncasecmp(s1: *const CChar, s2: *const CChar, n: usize) -> CInt {
-    for i in 0..n {
-        let s1_i = s1.add(i);
-        let s2_i = s2.add(i);
-        let val = (*s1_i).to_ascii_lowercase() as CInt - (*s2_i).to_ascii_lowercase() as CInt;
-        if val != 0 || *s1_i == 0 { return val; }
+    unsafe {
+        for i in 0..n {
+            let s1_i = s1.add(i);
+            let s2_i = s2.add(i);
+            let val = (*s1_i).to_ascii_lowercase() as CInt - (*s2_i).to_ascii_lowercase() as CInt;
+            if val != 0 || *s1_i == 0 {
+                return val;
+            }
+        }
+        0
     }
-    0
 }
 
 #[cfg(test)]

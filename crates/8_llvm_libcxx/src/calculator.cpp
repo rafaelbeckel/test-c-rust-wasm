@@ -86,55 +86,55 @@ private:
 
 extern "C" {
 
-CxxCalculator *calculator_new() {
+CxxCalculator *cpp_calc_new() {
     return reinterpret_cast<CxxCalculator *>(new CalculatorImpl());
 }
 
-void calculator_free(CxxCalculator *calc) {
+void cpp_calc_free(CxxCalculator *calc) {
     delete reinterpret_cast<CalculatorImpl *>(calc);
 }
 
-unsigned int calculator_add(CxxCalculator *calc, unsigned int a, unsigned int b) {
+unsigned int cpp_calc_add(CxxCalculator *calc, unsigned int a, unsigned int b) {
     return reinterpret_cast<CalculatorImpl *>(calc)->add(a, b);
 }
 
-unsigned int calculator_subtract(CxxCalculator *calc, unsigned int a, unsigned int b) {
+unsigned int cpp_calc_subtract(CxxCalculator *calc, unsigned int a, unsigned int b) {
     return reinterpret_cast<CalculatorImpl *>(calc)->subtract(a, b);
 }
 
-unsigned int calculator_multiply(CxxCalculator *calc, unsigned int a, unsigned int b) {
+unsigned int cpp_calc_multiply(CxxCalculator *calc, unsigned int a, unsigned int b) {
     return reinterpret_cast<CalculatorImpl *>(calc)->multiply(a, b);
 }
 
-unsigned int calculator_divide(CxxCalculator *calc, unsigned int a, unsigned int b) {
+unsigned int cpp_calc_divide(CxxCalculator *calc, unsigned int a, unsigned int b) {
     return reinterpret_cast<CalculatorImpl *>(calc)->divide(a, b);
 }
 
-void calculator_store(CxxCalculator *calc, unsigned int value) {
+void cpp_calc_store(CxxCalculator *calc, unsigned int value) {
     reinterpret_cast<CalculatorImpl *>(calc)->store_value(value);
 }
 
-unsigned int calculator_retrieve(CxxCalculator *calc) {
+unsigned int cpp_calc_retrieve(CxxCalculator *calc) {
     return reinterpret_cast<CalculatorImpl *>(calc)->retrieve_value();
 }
 
-void calculator_clear(CxxCalculator *calc) {
+void cpp_calc_clear(CxxCalculator *calc) {
     reinterpret_cast<CalculatorImpl *>(calc)->clear_memory();
 }
 
-unsigned int calculator_history_count(CxxCalculator *calc) {
+unsigned int cpp_calc_history_count(CxxCalculator *calc) {
     return reinterpret_cast<CalculatorImpl *>(calc)->history_count();
 }
 
-unsigned int calculator_history_get(CxxCalculator *calc, unsigned int index) {
+unsigned int cpp_calc_history_get(CxxCalculator *calc, unsigned int index) {
     return reinterpret_cast<CalculatorImpl *>(calc)->history_get(index);
 }
 
-void calculator_history_clear(CxxCalculator *calc) {
+void cpp_calc_history_clear(CxxCalculator *calc) {
     reinterpret_cast<CalculatorImpl *>(calc)->history_clear();
 }
 
-int calculator_format_last(CxxCalculator *calc, char *buf, unsigned int buf_len) {
+int cpp_calc_format_last(CxxCalculator *calc, char *buf, unsigned int buf_len) {
     return reinterpret_cast<CalculatorImpl *>(calc)->format_last(buf, buf_len);
 }
 

@@ -37,19 +37,20 @@ pub unsafe extern "C" fn calloc(nmemb: CSizeT, size: CSizeT) -> *mut u8 {
 
 #[cfg_attr(not(test), unsafe(no_mangle))]
 pub unsafe extern "C" fn realloc(ptr: *mut u8, size: CSizeT) -> *mut u8 {
-    if ptr.is_null() {
-        return malloc(size);
-    }
-    let old_size = unsafe { *(ptr.sub(MAX_ALIGN) as *mut CSizeT) };
-    let layout = alloc::alloc::Layout::from_size_align(old_size + MAX_ALIGN, MAX_ALIGN).unwrap();
-    let new_ptr = unsafe { alloc::alloc::realloc(ptr.sub(MAX_ALIGN), layout, size + MAX_ALIGN) };
-    if new_ptr.is_null() {
-        return new_ptr;
-    }
     unsafe {
+        if ptr.is_null() {
+            return malloc(size);
+        }
+        let old_size = *(ptr.sub(MAX_ALIGN) as *mut CSizeT);
+        let layout =
+            alloc::alloc::Layout::from_size_align(old_size + MAX_ALIGN, MAX_ALIGN).unwrap();
+        let new_ptr = alloc::alloc::realloc(ptr.sub(MAX_ALIGN), layout, size + MAX_ALIGN);
+        if new_ptr.is_null() {
+            return new_ptr;
+        }
         *(new_ptr as *mut CSizeT) = size;
+        new_ptr.add(MAX_ALIGN)
     }
-    unsafe { new_ptr.add(MAX_ALIGN) }
 }
 
 #[cfg_attr(not(test), unsafe(no_mangle))]
@@ -72,8 +73,12 @@ mod test {
         assert!(!ptr.is_null());
         unsafe {
             assert_eq!(*(ptr.sub(MAX_ALIGN) as *mut CSizeT), 10);
-            (0..10).for_each(|i| { *ptr.add(i) = i as u8; });
-            (0..10).for_each(|i| { assert_eq!(*ptr.add(i), i as u8); });
+            (0..10).for_each(|i| {
+                *ptr.add(i) = i as u8;
+            });
+            (0..10).for_each(|i| {
+                assert_eq!(*ptr.add(i), i as u8);
+            });
         }
         unsafe { free(ptr) };
     }
@@ -84,7 +89,9 @@ mod test {
         assert!(!ptr.is_null());
         unsafe {
             assert_eq!(*(ptr.sub(MAX_ALIGN) as *mut CSizeT), 100);
-            (0..100).for_each(|i| { assert_eq!(*ptr.add(i), 0); });
+            (0..100).for_each(|i| {
+                assert_eq!(*ptr.add(i), 0);
+            });
         }
         unsafe { free(ptr) };
     }
@@ -94,13 +101,17 @@ mod test {
         let ptr = unsafe { malloc(10) };
         assert!(!ptr.is_null());
         unsafe {
-            (0..10).for_each(|i| { *ptr.add(i) = i as u8; });
+            (0..10).for_each(|i| {
+                *ptr.add(i) = i as u8;
+            });
         }
         let ptr = unsafe { realloc(ptr, 20) };
         assert!(!ptr.is_null());
         unsafe {
             assert_eq!(*(ptr.sub(MAX_ALIGN) as *mut CSizeT), 20);
-            (0..10).for_each(|i| { assert_eq!(*ptr.add(i), i as u8); });
+            (0..10).for_each(|i| {
+                assert_eq!(*ptr.add(i), i as u8);
+            });
         }
         unsafe { free(ptr) };
     }

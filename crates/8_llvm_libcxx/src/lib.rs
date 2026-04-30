@@ -11,29 +11,24 @@ mod ffi {
         _private: [u8; 0],
     }
 
-    #[cfg_attr(target_arch = "wasm32", link(wasm_import_module = "env"))]
     unsafe extern "C" {
-        pub fn calculator_new() -> *mut CxxCalculator;
-        pub fn calculator_free(calc: *mut CxxCalculator);
+        pub fn cpp_calc_new() -> *mut CxxCalculator;
+        pub fn cpp_calc_free(calc: *mut CxxCalculator);
 
-        pub fn calculator_add(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
-        pub fn calculator_subtract(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
-        pub fn calculator_multiply(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
-        pub fn calculator_divide(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
+        pub fn cpp_calc_add(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
+        pub fn cpp_calc_subtract(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
+        pub fn cpp_calc_multiply(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
+        pub fn cpp_calc_divide(calc: *mut CxxCalculator, a: u32, b: u32) -> u32;
 
-        pub fn calculator_store(calc: *mut CxxCalculator, value: u32);
-        pub fn calculator_retrieve(calc: *mut CxxCalculator) -> u32;
-        pub fn calculator_clear(calc: *mut CxxCalculator);
+        pub fn cpp_calc_store(calc: *mut CxxCalculator, value: u32);
+        pub fn cpp_calc_retrieve(calc: *mut CxxCalculator) -> u32;
+        pub fn cpp_calc_clear(calc: *mut CxxCalculator);
 
-        pub fn calculator_history_count(calc: *mut CxxCalculator) -> u32;
-        pub fn calculator_history_get(calc: *mut CxxCalculator, index: u32) -> u32;
-        pub fn calculator_history_clear(calc: *mut CxxCalculator);
+        pub fn cpp_calc_history_count(calc: *mut CxxCalculator) -> u32;
+        pub fn cpp_calc_history_get(calc: *mut CxxCalculator, index: u32) -> u32;
+        pub fn cpp_calc_history_clear(calc: *mut CxxCalculator);
 
-        pub fn calculator_format_last(
-            calc: *mut CxxCalculator,
-            buf: *mut u8,
-            buf_len: u32,
-        ) -> i32;
+        pub fn cpp_calc_format_last(calc: *mut CxxCalculator, buf: *mut u8, buf_len: u32) -> i32;
     }
 }
 
@@ -49,7 +44,7 @@ pub struct Calculator {
 
 impl Drop for Calculator {
     fn drop(&mut self) {
-        unsafe { ffi::calculator_free(self.inner) };
+        unsafe { ffi::cpp_calc_free(self.inner) };
     }
 }
 
@@ -64,60 +59,63 @@ impl Calculator {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Calculator {
         Calculator {
-            inner: unsafe { ffi::calculator_new() },
+            inner: unsafe { ffi::cpp_calc_new() },
         }
     }
 
     pub fn add(&self, a: u32, b: u32) -> u32 {
-        unsafe { ffi::calculator_add(self.inner, a, b) }
+        unsafe { ffi::cpp_calc_add(self.inner, a, b) }
     }
 
     pub fn subtract(&self, a: u32, b: u32) -> u32 {
-        unsafe { ffi::calculator_subtract(self.inner, a, b) }
+        unsafe { ffi::cpp_calc_subtract(self.inner, a, b) }
     }
 
     pub fn multiply(&self, a: u32, b: u32) -> u32 {
-        unsafe { ffi::calculator_multiply(self.inner, a, b) }
+        unsafe { ffi::cpp_calc_multiply(self.inner, a, b) }
     }
 
     pub fn divide(&self, a: u32, b: u32) -> u32 {
-        unsafe { ffi::calculator_divide(self.inner, a, b) }
+        unsafe { ffi::cpp_calc_divide(self.inner, a, b) }
     }
 
     pub fn store(&self, value: u32) {
-        unsafe { ffi::calculator_store(self.inner, value) };
+        unsafe { ffi::cpp_calc_store(self.inner, value) };
     }
 
     pub fn retrieve(&self) -> u32 {
-        unsafe { ffi::calculator_retrieve(self.inner) }
+        unsafe { ffi::cpp_calc_retrieve(self.inner) }
     }
 
     pub fn clear(&self) {
-        unsafe { ffi::calculator_clear(self.inner) };
+        unsafe { ffi::cpp_calc_clear(self.inner) };
     }
 
     /// Returns the number of operations recorded in the C++ std::vector history.
     pub fn history_count(&self) -> u32 {
-        unsafe { ffi::calculator_history_count(self.inner) }
+        unsafe { ffi::cpp_calc_history_count(self.inner) }
     }
 
     /// Get the result of a specific past operation from the C++ std::vector.
     pub fn history_get(&self, index: u32) -> u32 {
-        unsafe { ffi::calculator_history_get(self.inner, index) }
+        unsafe { ffi::cpp_calc_history_get(self.inner, index) }
     }
 
     /// Clear the C++ operation history (std::vector::clear).
     pub fn history_clear(&self) {
-        unsafe { ffi::calculator_history_clear(self.inner) };
+        unsafe { ffi::cpp_calc_history_clear(self.inner) };
     }
 
     /// Format the last result using C++ std::string + snprintf.
     pub fn format_last(&self) -> String {
         let mut buf = vec![0u8; 128];
         let len =
-            unsafe { ffi::calculator_format_last(self.inner, buf.as_mut_ptr(), buf.len() as u32) };
+            unsafe { ffi::cpp_calc_format_last(self.inner, buf.as_mut_ptr(), buf.len() as u32) };
         if len > 0 {
-            buf.truncate(len as usize);
+            // snprintf returns the would-have-written length, which can
+            // exceed the buffer on truncation — clamp before slicing.
+            let written = (len as usize).min(buf.len());
+            buf.truncate(written);
             String::from_utf8_lossy(&buf).into_owned()
         } else {
             String::new()
@@ -129,7 +127,7 @@ impl Calculator {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn rust_subtract(left: u32, right: u32) -> u32 {
-    if left < right { 0 } else { left - right }
+    left.saturating_sub(right)
 }
 
 #[unsafe(no_mangle)]

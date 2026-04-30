@@ -4,7 +4,6 @@ use std::{env, fs};
 
 /// Emscripten's pre-generated wasm32 arch headers (relative to wasm32-libcxx)
 const EMSCRIPTEN_ARCH: &str = "../wasm32-libcxx/emscripten/system/lib/libc/musl/arch/emscripten";
-const EMSCRIPTEN_GENERIC: &str = "../wasm32-libcxx/emscripten/system/lib/libc/musl/arch/generic";
 
 fn parse_dir<T: AsRef<Path>>(path: T, sources: &mut Vec<PathBuf>, ext: &str, recursive: bool) {
     let Ok(dirs) = fs::read_dir(path) else {
@@ -17,12 +16,11 @@ fn parse_dir<T: AsRef<Path>>(path: T, sources: &mut Vec<PathBuf>, ext: &str, rec
 
         if path.is_dir() && recursive {
             parse_dir(path, sources, ext, true);
-        } else if path.is_file() {
-            if let Some(extension) = path.extension() {
-                if extension == ext {
-                    sources.push(path);
-                }
-            }
+        } else if path.is_file()
+            && let Some(extension) = path.extension()
+            && extension == ext
+        {
+            sources.push(path);
         }
     }
 }
@@ -34,10 +32,10 @@ fn copy_headers(src_dir: &str, dest_dir: &Path) {
     };
     for entry in entries.flatten() {
         let path = entry.path();
-        if path.extension().is_some_and(|ext| ext == "h") {
-            if let Some(name) = path.file_name() {
-                fs::copy(&path, dest_dir.join(name)).ok();
-            }
+        if path.extension().is_some_and(|ext| ext == "h")
+            && let Some(name) = path.file_name()
+        {
+            fs::copy(&path, dest_dir.join(name)).ok();
         }
     }
 }
@@ -48,7 +46,7 @@ fn main() {
     }
     println!("cargo::rustc-check-cfg=cfg(wasm)");
 
-    if !env::var("TARGET").map_or(false, |t| t.starts_with("wasm")) {
+    if !env::var("TARGET").is_ok_and(|t| t.starts_with("wasm")) {
         return;
     }
 
@@ -79,16 +77,13 @@ fn main() {
 
     let generated_include = out_dir.join("include");
 
-    let mut sources = vec![];
+    // The actual libc implementations come from Rust (src/ffi/*.rs) — only
+    // a handful of small C files (errno, version, nanoprintf) need to be
+    // compiled here. musl headers are still used for the public API surface
+    // and are exposed to bindgen below.
     let mut headers = vec![];
-    parse_dir("./musl/src", &mut sources, "c", false);
     // Only include top-level C standard headers (not Linux-specific sys/*, linux/*, etc.)
     parse_dir("./musl/include", &mut headers, "h", false);
-
-    let sources = sources
-        .iter()
-        .map(|f| format!("{}", f.display()))
-        .collect::<Vec<_>>();
 
     // Include order matches emscripten's MuslInternalLibrary:
     //   arch/emscripten → arch/generic → src/internal → src/include → include
@@ -101,7 +96,6 @@ fn main() {
         .file("src/errno.c")
         .file("src/version.c")
         .file("src/nanoprintf.c")
-        .files(sources)
         .std("c17")
         .compile("wasm32-libc");
 

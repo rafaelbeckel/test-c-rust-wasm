@@ -12,5 +12,5 @@ fn main() {
     build.file("src/calculator.c");
     build.file("src/memory.c");
     build.compile("c_maths");
-    println!("cargo::rerun-if-changed=src/**");
+    println!("cargo::rerun-if-changed=src");
 }
