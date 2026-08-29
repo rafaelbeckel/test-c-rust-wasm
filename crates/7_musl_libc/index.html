@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example 7: Musl libc</title>
+  </head>
+  <body>
+    <h1>Rust + C Calculator Demo</h1>
+
+    <h2>Example 7: Musl libc</h2>
+
+    <p>
+      This is a simple demonstration of how to compile Rust and C together in
+      the same WASM binary, and make them call each other.
+    </p>
+
+    <p>
+      The C side of this example has a whole C standard library behind it. Musl
+      v1.2.6 is compiled for <code>wasm32-unknown-unknown</code> by
+      <code>3rd-party/wasm32-libc</code>, so the calculator can call
+      <code>snprintf</code> to format a result and <code>printf</code> to write
+      a line out.
+    </p>
+
+    <p>
+      <code>malloc</code> and <code>free</code> forward to Rust's global
+      allocator, so C and Rust share one heap that grows with the WASM memory.
+      The single number behind <code>store()</code> lives in a block C asked
+      for and Rust handed out.
+    </p>
+
+    <p>
+      Anything C prints leaves the module through one import,
+      <code>env.__wasm32_libc_write</code>, and <code>pkg/env.js</code>
+      forwards it to the browser console. The last call on this page,
+      <code>calculator.log_result(42)</code>, writes a line that way. Open the
+      developer console to see it.
+    </p>
+
+    <h2>Built with wasm-pack</h2>
+
+    <div id="output"></div>
+
+    <script type="module">
+      import init, { Calculator } from "./pkg/musl_calculator.js";
+      import { setMemory } from "./pkg/env.js";
+
+      const output = document.getElementById("output");
+
+      (async () => {
+        // The module exports its memory instead of importing one, so the shim
+        // can only be given a view of it once init() resolves. Do this before
+        // anything in C writes to stdout or stderr.
+        const wasm = await init();
+        setMemory(wasm.memory);
+
+        const calculator = new Calculator();
+
+        // JS calls Rust
+        output.innerHTML += `<h3>Subtract is defined in Rust:</h3>`;
+        output.innerHTML += `<pre>calculator.subtract(2, 1)</pre>`;
+        output.innerHTML += `<p>= ${calculator.subtract(2, 1)}</p>`;
+
+        // JS calls C
+        output.innerHTML += `<h3>Add is defined in C:</h3>`;
+        output.innerHTML += `<pre>calculator.add(1, 1)</pre>`;
+        output.innerHTML += `<p>= ${calculator.add(1, 1)}</p>`;
+
+        // C calls Rust (calls subtract() in a loop)
+        output.innerHTML += `<h3>Divide is defined in C and calls subtract() in Rust multiple times:</h3>`;
+        output.innerHTML += `<pre>calculator.divide(6, 2)</pre>`;
+        output.innerHTML += `<p>= ${calculator.divide(6, 2)}</p>`;
+
+        // Rust calls C (calls add() in a loop)
+        output.innerHTML += `<h3>Multiply is defined in Rust and calls add() in C multiple times:</h3>`;
+        output.innerHTML += `<pre>calculator.multiply(2, 2)</pre>`;
+        output.innerHTML += `<p>= ${calculator.multiply(2, 2)}</p>`;
+
+        // Store a number in a block C asked malloc for
+        output.innerHTML += `<h3>Store puts a number on the heap that C and Rust share:</h3>`;
+        output.innerHTML += `<pre>calculator.store(42)</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
+        calculator.store(42);
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
+
+        // Free it again
+        output.innerHTML += `<h3>Clear frees that block and leaves nothing to read:</h3>`;
+        output.innerHTML += `<pre>calculator.clear()</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
+        calculator.clear();
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
+
+        // snprintf writes into a buffer Rust owns, and Rust reads it back
+        output.innerHTML += `<h3>A result can be formatted by snprintf, into a buffer Rust owns:</h3>`;
+        output.innerHTML += `<pre>calculator.format_result(4294967295)</pre>`;
+        output.innerHTML += `<p>= ${calculator.format_result(4294967295)}</p>`;
+
+        // printf, which reaches the console through env.js
+        output.innerHTML += `<h3>Or printed by printf, in which case it lands in the developer console:</h3>`;
+        output.innerHTML += `<pre>calculator.log_result(42)</pre>`;
+        calculator.log_result(42);
+        output.innerHTML += `<p>= "Calculator result: 42", in the console</p>`;
+      })();
+    </script>
+  </body>
+</html>

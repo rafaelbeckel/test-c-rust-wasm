@@ -33,14 +33,9 @@ All methods are exported to a single `.wasm` file and can be called from JS.
 
 Check out `build.sh` for an example.
 
-This crate explores two build strategies:
+The `./build.sh` script compiles with **cargo** and writes the results to the `/build` directory. It does not call wasm-pack, because nothing here is annotated with `#[wasm_bindgen]`. Crate 4 is where wasm-pack enters.
 
-- **Strategy 1:** with cargo build
-- **Strategy 2:** with wasm-pack
-
-The `./build.sh` script will compile with **cargo** and output the results to the `/build` directory, then it will also call **wasm-pack** and output the results to the `/pkg` directory.
-
-To build this project yourself, you need **llvm**, **clang**, **Rust**, and **wasm-pack**.
+To build this project yourself, you need **llvm**, **clang**, **Rust**, and **wabt** for `wasm2wat`.
 
 To see it working in your browser, use your preferred local server:
 
@@ -48,12 +43,10 @@ To see it working in your browser, use your preferred local server:
 npx serve
 ```
 
-Then, visit <http://localhost:3000> and check the console.
-
-The example uses both builds in the same page.
+Then, visit <http://localhost:3000>. The page fetches `build/cc_calculator.wasm` directly and writes the results into the document.
 
 ## Inspecting the output
 
-It's especially interesting to compare the raw WAT output from cargo with the optimized one from wasm-bindgen.
+`build.sh` also runs `wasm2wat`, so `build/cc_calculator.wat` holds the text form of the module.
 
-To do that, look at the `cc_calculator.wat` from both build directories, `/build` and `/pkg`.
+It is short enough to read end to end, and it is the quickest way to see which symbols reach the WASM public interface: `add`, `subtract`, `multiply`, and `divide`, but neither `_add` nor `_divide`.

@@ -1,5 +1,15 @@
+# Cargo's shared build directory, at the workspace root.
 /target
+
 .DS_Store
+
+# Build output. wasm-pack writes pkg/, crates 1 to 3 write build/, and both
+# leave a .wat disassembly next to the binary.
 pkg/
 build/
 *.wat
+
+# Every crate here is a workspace member, so the root Cargo.lock is the only
+# one anything reads. A lock file beside a member is dead weight.
+crates/*/Cargo.lock
+3rd-party/*/Cargo.lock

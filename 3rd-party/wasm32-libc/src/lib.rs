@@ -1,55 +1,34 @@
-mod ffi;
-pub use ffi::*;
+//! musl libc for `wasm32-unknown-unknown`.
+//!
+//! The C side of this crate is musl v1.2.6, compiled from the `3rd-party/musl`
+//! submodule by `build.rs`. The Rust side is the allocator: C's `malloc` and
+//! friends hand their work to Rust's global allocator so that C and Rust share
+//! one heap. See [`malloc`] for why.
+//!
+//! Only the part of musl that needs no operating system is built: string
+//! handling, character classification, formatting and parsing, sorting,
+//! searching, math, and the stdio layer above them. Files, sockets, processes,
+//! signals and threads are left out, so a call to `open` or `fork` fails to
+//! link rather than returning a plausible-looking error at runtime. The wasm32
+//! arch layer musl is missing lives in `src/wasm32/`.
+//!
+//! Add it to a crate that compiles C for wasm:
+//!
+//! ```toml
+//! [target.'cfg(target_arch = "wasm32")'.dependencies]
+//! wasm32-libc = { path = "../../3rd-party/wasm32-libc" }
+//! ```
+//!
+//! and point the C compiler at the headers from `build.rs`:
+//!
+//! ```text
+//! if let Ok(libc) = std::env::var("DEP_WASM32_LIBC_INCLUDE") {
+//!     let mut build = cc::Build::new();
+//!     for path in libc.split(':') {
+//!         build.include(path);
+//!     }
+//! }
+//! ```
 
-// `__errno_location` is defined in C (src/errno.c) with the correct
-// `int *` signature. `puts` and `getenv` are not provided here — if
-// any linked C/C++ code references them, the link will fail loudly
-// rather than silently call a wrong-ABI shim.
-
-#[cfg(wasm)]
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn __assert_fail(
-    assertion: *const CChar,
-    file: *const CChar,
-    line: CInt,
-    function: *const CChar,
-) {
-    let assertion = std::ffi::CStr::from_ptr(assertion as *const i8);
-    let assertion = assertion.to_str().unwrap();
-
-    let file = std::ffi::CStr::from_ptr(file as *const i8);
-    let file = file.to_str().unwrap();
-
-    let function = std::ffi::CStr::from_ptr(function as *const i8);
-    let function = function.to_str().unwrap();
-
-    eprintln!(
-        "Assertion failed: {} ({}, {}:{})",
-        assertion, file, function, line
-    );
-    std::process::abort();
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn strncpy_short() {
-        let src = b"hi\0";
-        let mut dest = *b"abcdef";
-        let result = unsafe { ffi::strncpy(dest.as_mut_ptr(), src.as_ptr(), 5) };
-        assert_eq!(
-            unsafe { core::slice::from_raw_parts(result, 6) },
-            *b"hi\0\0\0f"
-        );
-    }
-
-    #[test]
-    fn strncpy_two() {
-        let src = b"hello\0";
-        let mut dest = [0u8; 2];
-        let result = unsafe { ffi::strncpy(dest.as_mut_ptr(), src.as_ptr(), dest.len()) };
-        assert_eq!(unsafe { core::slice::from_raw_parts(result, 2) }, b"he");
-    }
-}
+mod malloc;
+pub use malloc::{calloc, free, malloc, realloc};

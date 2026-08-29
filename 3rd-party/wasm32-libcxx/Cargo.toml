@@ -3,11 +3,12 @@ edition = "2024"
 name = "wasm32-libcxx"
 version = "0.1.0"
 links = "wasm32-libcxx"
-description = "LLVM's libc++ customized for WASM, sourced from the emscripten LLVM fork."
+description = "LLVM libc++ for wasm32-unknown-unknown, built on musl."
 readme = "README.md"
 keywords = ["libcxx"]
-license = "BSD-3-Clause AND ISC AND MIT"
-repository = "https://github.com/emscripten-core/emscripten"
+# LLVM libc++ and libc++abi, taken from emscripten. See THIRD-PARTY.md.
+license = "Apache-2.0 WITH LLVM-exception AND MIT"
+repository = "https://github.com/rafaelbeckel/test-c-rust-wasm"
 
 [dependencies]
 wasm32-libc = { path = "../wasm32-libc" }

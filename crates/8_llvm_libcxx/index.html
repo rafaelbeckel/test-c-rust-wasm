@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example 8: LLVM libc++</title>
+  </head>
+  <body>
+    <h1>Rust + C++ Calculator Demo</h1>
+
+    <h2>Example 8: LLVM libc++</h2>
+
+    <p>
+      This is a simple demonstration of how to compile Rust and C++ together in
+      the same WASM binary, and make them call each other.
+    </p>
+
+    <p>
+      The calculator here is a C++ class. It keeps its history in a
+      <code>std::vector</code> and builds its label with a
+      <code>std::string</code>, which means a real C++ standard library is
+      running inside the module. LLVM's libc++ is compiled for
+      <code>wasm32-unknown-unknown</code> by
+      <code>3rd-party/wasm32-libcxx</code>, on top of the musl libc from
+      example 7. The rest of the libc++ headers, <code>&lt;algorithm&gt;</code>
+      among them, sit on the include path next to those two.
+    </p>
+
+    <p>
+      Rust cannot call a C++ method directly, so
+      <code>src/calculator.cpp</code> wraps the class in a handful of
+      <code>extern "C"</code> functions over an opaque handle. That C API is
+      what the Rust FFI declares, and wasm-bindgen exports a Rust struct around
+      it. Arithmetic goes the other way too: <code>subtract</code> and
+      <code>multiply</code> in the C++ class call Rust.
+    </p>
+
+    <p>
+      The module imports <code>env.__wasm32_libc_write</code> and
+      <code>pkg/env.js</code> forwards it to the browser console. Nothing on
+      this page writes through it. It is there because libc++ reports a failed
+      assertion or a call to <code>std::terminate</code> on stderr before it
+      aborts, and that report needs somewhere to go. <code>setMemory</code>
+      still has to run first, so the shim has memory to read the message out
+      of.
+    </p>
+
+    <h2>Built with wasm-pack</h2>
+
+    <div id="output"></div>
+
+    <script type="module">
+      import init, { Calculator } from "./pkg/libcxx_calculator.js";
+      import { setMemory } from "./pkg/env.js";
+
+      const output = document.getElementById("output");
+
+      (async () => {
+        // The module exports its memory instead of importing one, so the shim
+        // can only be given a view of it once init() resolves.
+        const wasm = await init();
+        setMemory(wasm.memory);
+
+        const calculator = new Calculator();
+
+        // Every operation is recorded in the C++ std::vector
+        output.innerHTML += `<h3>Add is defined in C++:</h3>`;
+        output.innerHTML += `<pre>calculator.add(2, 3)</pre>`;
+        output.innerHTML += `<p>= ${calculator.add(2, 3)}</p>`;
+
+        // C++ calls Rust
+        output.innerHTML += `<h3>Subtract is defined in C++ and calls Rust:</h3>`;
+        output.innerHTML += `<pre>calculator.subtract(10, 4)</pre>`;
+        output.innerHTML += `<p>= ${calculator.subtract(10, 4)}</p>`;
+
+        // C++ calls Rust
+        output.innerHTML += `<h3>Multiply is defined in C++ and calls Rust:</h3>`;
+        output.innerHTML += `<pre>calculator.multiply(6, 7)</pre>`;
+        output.innerHTML += `<p>= ${calculator.multiply(6, 7)}</p>`;
+
+        // C++ calls Rust in a loop
+        output.innerHTML += `<h3>Divide is defined in C++ and subtracts through Rust in a loop:</h3>`;
+        output.innerHTML += `<pre>calculator.divide(20, 5)</pre>`;
+        output.innerHTML += `<p>= ${calculator.divide(20, 5)}</p>`;
+
+        // std::vector::size
+        output.innerHTML += `<h3>Every result so far went into a std::vector:</h3>`;
+        output.innerHTML += `<pre>calculator.history_count()</pre>`;
+        output.innerHTML += `<p>= ${calculator.history_count()}</p>`;
+
+        // std::vector::operator[]
+        output.innerHTML += `<h3>Each one can be read back by index:</h3>`;
+        const count = calculator.history_count();
+        for (let i = 0; i < count; i++) {
+          output.innerHTML += `<pre>calculator.history_get(${i})</pre>`;
+          output.innerHTML += `<p>= ${calculator.history_get(i)}</p>`;
+        }
+
+        // std::string + snprintf
+        output.innerHTML += `<h3>The last result is formatted with std::string and snprintf:</h3>`;
+        output.innerHTML += `<pre>calculator.format_last()</pre>`;
+        output.innerHTML += `<p>= ${calculator.format_last()}</p>`;
+
+        // std::vector::clear
+        output.innerHTML += `<h3>Clearing the history empties the vector:</h3>`;
+        output.innerHTML += `<pre>calculator.history_clear()</pre>`;
+        output.innerHTML += `<pre>calculator.history_count()</pre>`;
+        calculator.history_clear();
+        output.innerHTML += `<p>= ${calculator.history_count()}</p>`;
+
+        output.innerHTML += `<h3>And an empty history says so:</h3>`;
+        output.innerHTML += `<pre>calculator.format_last()</pre>`;
+        output.innerHTML += `<p>= ${calculator.format_last()}</p>`;
+
+        // The single memory slot is plain C, from src/memory.c
+        output.innerHTML += `<h3>Store and retrieve go through the C memory slot, not the vector:</h3>`;
+        output.innerHTML += `<pre>calculator.store(99)</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
+        calculator.store(99);
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
+
+        output.innerHTML += `<h3>Clear frees it again:</h3>`;
+        output.innerHTML += `<pre>calculator.clear()</pre>`;
+        output.innerHTML += `<pre>calculator.retrieve()</pre>`;
+        calculator.clear();
+        output.innerHTML += `<p>= ${calculator.retrieve()}</p>`;
+      })();
+    </script>
+  </body>
+</html>

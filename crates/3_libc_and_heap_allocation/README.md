@@ -2,9 +2,11 @@
 
 ## Project 3: libc and heap allocation
 
-While `wasm32-wasi` and `wasm32-unknown-emscripten` include an interface for system functions to be provided by the host, `wasm32-unknown-unknown` is limited by communicationg with primitive types only.
+While `wasm32-wasi` and `wasm32-unknown-emscripten` include an interface for system functions to be provided by the host, `wasm32-unknown-unknown` is limited to communicating with primitive types only.
 
-In this example, we use a subset of [OpenBSD libc](https://github.com/trevyn/wasm32-unknown-unknown-openbsd-libc) and link it statically to store a value in the heap from C with `malloc()` and `free()`.
+In this example, we link the local [`wasm32-libc`](../../3rd-party/wasm32-libc) crate, which compiles musl v1.2.6 for `wasm32-unknown-unknown`, and store a value in the heap from C with `malloc()` and `free()`.
+
+The link is static, so the module imports nothing and carries its own `malloc` and `free`. Those two are written in Rust and forward to Rust's global allocator, which means C and Rust allocate from a single heap that grows the WebAssembly memory as needed. That shared heap is the point of the example.
 
 ## The calculator with memory
 
@@ -23,7 +25,3 @@ As an alternative to renaming the C symbols like we did in the last example, thi
 Only `subtract()` and `multiply()` are defined in Rust.
 
 One could write a JS wrapper manually to convert these functions to a more idiomatic JavaScript class. However, the recommended way of doing that is by using wasm-bindgen, which is demonstrated in the next example.
-
-## References
-
-The original `wasm32-unknown-unknown-openbsd-libc` was created by [@trevyn](https://github.com/trevyn).

@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-# Build with wasm-pack (requires both musl and libcxx submodules)
 wasm-pack build --target web --release
 
-# Replaces the import statement `from "env"` with `from "./env.js"`.
+# The C++ runtime writes to stderr through an import from the "env" module.
+# wasm-bindgen emits a bare `from "env"`, which no browser resolves, so point
+# it at the shim next to it.
 # `sed -i.bak` works on both BSD (macOS) and GNU sed; we then drop the backup.
 sed -i.bak -E 's#from ["'\'']env["'\'']#from "./env.js"#g' pkg/libcxx_calculator.js
 rm -f pkg/libcxx_calculator.js.bak
 
-# Copy the env.js shim
 cp src/env.js pkg/env.js
 
 # Optional: inspect the WAT output

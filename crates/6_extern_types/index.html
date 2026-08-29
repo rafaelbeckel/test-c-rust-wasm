@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<!-- add.html -->
 <html>
-  <head></head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example 6: extern types</title>
+  </head>
   <body>
     <h1>Rust + C Calculator Demo</h1>
 
@@ -22,6 +24,13 @@
       Bindgen, you will not be able to use this feature.
     </p>
 
+    <p>
+      The C here calls malloc and free. Both come from the wasm32-libc crate
+      and forward to Rust's global allocator, so C and Rust share one heap
+      that grows with the WASM memory. The module exports malloc and free
+      along with its memory, and needs no allocator from Javascript.
+    </p>
+
     <h2>Built with wasm-pack</h2>
 
     <div id="output"></div>
@@ -31,7 +40,7 @@
 
       const output = document.getElementById("output");
 
-      // Option 1: instance from wasm-pack
+      // Instance from wasm-pack
       (async () => {
         await init();
         let calculator = new Calculator();
@@ -56,7 +65,7 @@
         output.innerHTML += `<pre>calculator.multiply(2, 2)</pre>`;
         output.innerHTML += `<p>= ${calculator.multiply(2, 2)}</p>`;
 
-        // Store some number in C's heap
+        // Store a number on the heap C and Rust share
         output.innerHTML += `<h3>We can store a single number in memory and retrieve it:</h3>`;
         output.innerHTML += `<pre>calculator.store(42)</pre>`;
         output.innerHTML += `<pre>calculator.retrieve()</pre>`;

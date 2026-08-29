@@ -1,24 +1,18 @@
 [package]
 edition = "2024"
 name = "wasm32-libc"
-version = "0.3.0"
+version = "0.4.0"
 links = "wasm32-libc"
-description = "Musl libc for wasm32-unknown-unknown."
+description = "musl libc compiled for wasm32-unknown-unknown, with a Rust-backed allocator."
 readme = "README.md"
-keywords = ["libc"]
-license = "BSD-3-Clause AND ISC AND MIT"
-repository = "https://git.musl-libc.org/cgit/musl"
+keywords = ["libc", "musl", "wasm"]
+# musl is MIT. src/malloc.rs is Blue Oak Model Licence 1.0.0. See THIRD-PARTY.md.
+license = "MIT AND BlueOak-1.0.0"
+repository = "https://github.com/rafaelbeckel/test-c-rust-wasm"
 
 [lib]
 path = "src/lib.rs"
 
-[dependencies]
-portable-atomic = { workspace = true }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-web-sys = { version = "0.3", features = ["console"] }
-
 [build-dependencies]
 cc = { workspace = true }
-bindgen = { workspace = true }
 cfg_aliases = { workspace = true }

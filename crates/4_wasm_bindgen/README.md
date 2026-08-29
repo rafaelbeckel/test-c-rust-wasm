@@ -22,4 +22,7 @@ This project has the same functions as the last one, but wrapped in a Javascript
 
 ## References
 
-We still use OpenBSD libc by [@trevyn](https://github.com/trevyn) here.
+The C standard library comes from the `wasm32-libc` crate in this repo, which
+compiles musl v1.2.6 for `wasm32-unknown-unknown`. Its `malloc` and `free` are
+Rust functions backed by Rust's global allocator, so the C in `src/memory.c`
+and the Rust around it allocate from one shared heap.
