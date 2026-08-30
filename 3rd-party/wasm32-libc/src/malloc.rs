@@ -31,7 +31,8 @@ const MAX_ALIGN: usize = 16;
 /// with nothing else: it carries a header that only these functions know about.
 #[cfg_attr(wasm, unsafe(no_mangle))]
 pub unsafe extern "C" fn malloc(size: usize) -> *mut u8 {
-    let layout = alloc::alloc::Layout::from_size_align(size + MAX_ALIGN, MAX_ALIGN).unwrap();
+    let Some(total) = size.checked_add(MAX_ALIGN) else { return core::ptr::null_mut(); };
+    let Ok(layout) = alloc::alloc::Layout::from_size_align(total, MAX_ALIGN) else { return core::ptr::null_mut(); };
     let ptr = unsafe { alloc::alloc::alloc(layout) };
     if ptr.is_null() {
         return ptr;
