@@ -129,16 +129,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "js-sys"
-version = "0.3.95"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2964e92d1d9dc3364cae4d718d93f227e3abb088e747d92e0395bfdedf1c12ca"
-dependencies = [
- "once_cell",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.185"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -149,7 +139,6 @@ name = "libc_calculator"
 version = "0.1.0"
 dependencies = [
  "cc",
- "wasm-bindgen",
  "wasm32-libc",
 ]
 
@@ -215,12 +204,6 @@ name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-[[package]]
-name = "portable-atomic"
-version = "1.13.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c33a9471896f1c69cecef8d20cbe2f7accd12527ce60845ff44c153bb2a21b49"
 
 [[package]]
 name = "prettyplease"
@@ -371,13 +354,10 @@ dependencies = [
 
 [[package]]
 name = "wasm32-libc"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
- "bindgen",
  "cc",
  "cfg_aliases",
- "portable-atomic",
- "web-sys",
 ]
 
 [[package]]
@@ -402,16 +382,6 @@ dependencies = [
  "cc",
  "wasm-bindgen",
  "wasm32-libc",
-]
-
-[[package]]
-name = "web-sys"
-version = "0.3.95"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f2dfbb17949fa2088e5d39408c48368947b86f7834484e87b73de55bc14d97d"
-dependencies = [
- "js-sys",
- "wasm-bindgen",
 ]
 
 [[package]]

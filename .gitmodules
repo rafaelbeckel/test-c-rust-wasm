@@ -1,11 +1,11 @@
-[submodule "3rd-party/wasm32-libc/musl"]
-	path = 3rd-party/wasm32-libc/musl
+[submodule "3rd-party/musl"]
+	path = 3rd-party/musl
 	url = https://git.musl-libc.org/git/musl
 	branch = v1.2.6
 	shallow = true
 
-[submodule "3rd-party/wasm32-libcxx/emscripten"]
-	path = 3rd-party/wasm32-libcxx/emscripten
+[submodule "3rd-party/emscripten"]
+	path = 3rd-party/emscripten
 	url = https://github.com/emscripten-core/emscripten.git
 	branch = main
 	shallow = true

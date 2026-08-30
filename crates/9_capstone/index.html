@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example 9: Capstone, zlib</title>
+  </head>
+  <body>
+    <h1>Rust + C Compression Demo</h1>
+
+    <h2>Example 9: Capstone, zlib</h2>
+
+    <p>
+      This is a real external C library running in a WASM binary next to Rust.
+      The zlib sources are a git submodule, taken from upstream and compiled as
+      they are. No patches, no shims, no per-function stubs. The build script
+      hands eleven <code>.c</code> files to the <code>cc</code> crate and points
+      the include path at the musl headers from
+      <code>3rd-party/wasm32-libc</code>.
+    </p>
+
+    <p>
+      That is the whole point of the eight examples before it. Once the C
+      standard library is real, a C library written for a desktop or a server
+      compiles for <code>wasm32-unknown-unknown</code> without being told it is
+      in a browser. zlib allocates with <code>malloc</code>, which forwards to
+      Rust's global allocator, so the compression buffers and the Rust
+      <code>Vec</code> that receives them live on the same heap.
+    </p>
+
+    <p>
+      Rust wraps <code>compress</code> and <code>uncompress</code> in a safe
+      <code>Compressor</code>, and wasm-bindgen exports it. Bytes cross as
+      <code>Uint8Array</code>. Decompression takes the original length as well,
+      because a raw zlib stream does not record it.
+    </p>
+
+    <h2>Built with wasm-pack</h2>
+
+    <div id="output"></div>
+
+    <script type="module">
+      import init, { Compressor } from "./pkg/zlib_compression.js";
+
+      const output = document.getElementById("output");
+
+      (async () => {
+        await init();
+        const compressor = new Compressor();
+
+        // The version string comes straight out of the C library
+        output.innerHTML += `<h3>The library reports its own version:</h3>`;
+        output.innerHTML += `<pre>compressor.version()</pre>`;
+        output.innerHTML += `<p>= ${compressor.version()}</p>`;
+
+        const text =
+          "The quick brown fox jumps over the lazy dog. ".repeat(12);
+        const original = new TextEncoder().encode(text);
+
+        output.innerHTML += `<h3>Here is the text we are about to squeeze:</h3>`;
+        output.innerHTML += `<pre>${text.slice(0, 44)}[ and 11 more copies ]</pre>`;
+        output.innerHTML += `<p>= ${original.length} bytes</p>`;
+
+        // Rust calls zlib's compress()
+        output.innerHTML += `<h3>Compress runs zlib's deflate over those bytes:</h3>`;
+        output.innerHTML += `<pre>compressor.compress(original)</pre>`;
+        const compressed = compressor.compress(original);
+        const saved = (
+          (1 - compressed.length / original.length) *
+          100
+        ).toFixed(1);
+        output.innerHTML += `<p>= ${compressed.length} bytes, ${saved}% smaller</p>`;
+
+        // And zlib's uncompress() on the way back
+        output.innerHTML += `<h3>Decompress runs inflate, given the original length:</h3>`;
+        output.innerHTML += `<pre>compressor.decompress(compressed, ${original.length})</pre>`;
+        const decompressed = compressor.decompress(compressed, original.length);
+        output.innerHTML += `<p>= ${decompressed.length} bytes</p>`;
+
+        // Byte for byte, not just the same length
+        const identical =
+          decompressed.length === original.length &&
+          decompressed.every((byte, i) => byte === original[i]);
+
+        output.innerHTML += `<h3>The round trip is lossless:</h3>`;
+        output.innerHTML += `<pre>decompressed.every((byte, i) => byte === original[i])</pre>`;
+        output.innerHTML += `<p>= ${identical}</p>`;
+
+        output.innerHTML += `<h3>And the text reads back as it went in:</h3>`;
+        output.innerHTML += `<pre>new TextDecoder().decode(decompressed)</pre>`;
+        const roundTripped = new TextDecoder().decode(decompressed);
+        output.innerHTML += `<p>= ${roundTripped.slice(0, 44)}[ and 11 more copies ]</p>`;
+      })();
+    </script>
+  </body>
+</html>

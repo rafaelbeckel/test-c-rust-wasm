@@ -12,7 +12,7 @@ extern "C" {
  * Rust can consume it via FFI. The C++ implementation uses:
  *   - std::vector for operation history
  *   - std::string for formatted output
- *   - std::optional for error handling
+ *   - snprintf from <cstdio>, which musl provides
  *
  * All of these require LLVM libc++ (wasm32-libcxx).
  */

@@ -25,6 +25,7 @@ mod ffi {
         pub retrieve: unsafe extern "C" fn() -> usize,
         pub clear: unsafe extern "C" fn(),
         pub format_result: unsafe extern "C" fn(value: usize, buf: *mut u8, buf_len: usize) -> i32,
+        pub log_result: unsafe extern "C" fn(value: usize),
     }
 }
 
@@ -81,21 +82,28 @@ impl Calculator {
         unsafe { ((*self.calculator).clear)() };
     }
 
-    /// Format a result as a string using musl's snprintf.
-    /// This demonstrates using a full C standard library function
-    /// that was not available with the OpenBSD libc shim.
+    /// Formats a result through the C library's snprintf.
     pub fn format_result(&self, value: usize) -> String {
         let mut buf = vec![0u8; 64];
         let len = unsafe { ((*self.calculator).format_result)(value, buf.as_mut_ptr(), buf.len()) };
         if len > 0 {
             // snprintf returns the would-have-written length, which can
-            // exceed the buffer on truncation — clamp before slicing.
+            // exceed the buffer on truncation. Clamp before slicing.
             let written = (len as usize).min(buf.len());
             buf.truncate(written);
             String::from_utf8_lossy(&buf).into_owned()
         } else {
             String::new()
         }
+    }
+
+    /// Writes a line to the host console through the C library's printf.
+    ///
+    /// stdout is line buffered, so the newline inside `log_result` is what
+    /// hands the bytes to `env.__wasm32_libc_write`. Supply that import from
+    /// JavaScript; `src/env.js` next to this crate is the one the demo uses.
+    pub fn log_result(&self, value: usize) {
+        unsafe { ((*self.calculator).log_result)(value) };
     }
 }
 
@@ -165,5 +173,21 @@ mod tests {
         let calc = Calculator::new();
         let result = calc.format_result(42);
         assert_eq!(result, "Result: 42");
+    }
+
+    #[test]
+    fn test_format_result_truncates_cleanly() {
+        let calc = Calculator::new();
+        // The buffer is 64 bytes, so nothing here truncates; what this pins
+        // down is that a wide value still comes back intact.
+        assert_eq!(calc.format_result(4_294_967_295), "Result: 4294967295");
+    }
+
+    #[test]
+    fn test_log_result_writes_a_line() {
+        // On the host this reaches the real stdout. Under wasm it reaches
+        // env.__wasm32_libc_write; tests/smoke.mjs asserts the text there.
+        let calc = Calculator::new();
+        calc.log_result(42);
     }
 }

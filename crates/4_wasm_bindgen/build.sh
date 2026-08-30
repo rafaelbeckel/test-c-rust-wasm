@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # For wasm-bindgen, compiling directly without wasm-pack would require

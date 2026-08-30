@@ -49,9 +49,9 @@ fn main() {
     // LLVM fork (populated by git submodule). Build configuration mirrors
     // emscripten's system_libs.py (libcxx + libcxxabi classes).
 
-    let libcxx = "emscripten/system/lib/libcxx";
-    let libcxxabi = "emscripten/system/lib/libcxxabi";
-    let llvm_libc = "emscripten/system/lib/llvm-libc";
+    let libcxx = "../emscripten/system/lib/libcxx";
+    let libcxxabi = "../emscripten/system/lib/libcxxabi";
+    let llvm_libc = "../emscripten/system/lib/llvm-libc";
 
     // ── libcxx sources (glob minus exclusions, matching emscripten) ───────
     let libcxx_sources = glob_cpp(&format!("{libcxx}/src"), LIBCXX_EXCLUDE);

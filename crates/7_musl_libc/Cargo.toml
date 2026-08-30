@@ -2,7 +2,7 @@
 name = "musl_calculator"
 version = "0.1.0"
 edition = "2024"
-description = "Calculator using musl libc for wasm32-unknown-unknown (replaces OpenBSD libc)"
+description = "Calculator built on musl libc for wasm32-unknown-unknown"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

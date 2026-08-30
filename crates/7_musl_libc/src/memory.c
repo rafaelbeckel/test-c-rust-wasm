@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
-// Pointer to store the memory address (uses musl's malloc/free)
+// Pointer to store the memory address. malloc and free come from
+// wasm32-libc, which routes them to Rust's allocator.
 unsigned int *memory = NULL;
 
 // Stores a value in memory

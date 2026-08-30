@@ -21,11 +21,18 @@ unsigned int divide(unsigned int dividend, unsigned int divisor)
     return quotient;
 }
 
-// Uses musl's snprintf — this is the key difference from crate 4.
-// With OpenBSD libc, printf/snprintf were not available.
+// Formats into the caller's buffer. Returns the length snprintf would have
+// written, which can exceed buf_len when the text is truncated.
 int format_result(unsigned int value, char *buf, unsigned int buf_len)
 {
     return snprintf(buf, buf_len, "Result: %u", value);
+}
+
+// stdout is line buffered, so the newline is what pushes the text out to
+// env.__wasm32_libc_write. See 3rd-party/wasm32-libc/src/wasm32/stdio.c.
+void log_result(unsigned int value)
+{
+    printf("Calculator result: %u\n", value);
 }
 
 struct Calculator *new_calculator()
@@ -40,6 +47,7 @@ struct Calculator *new_calculator()
     calculator->retrieve = retrieve;
     calculator->clear = clear;
     calculator->format_result = format_result;
+    calculator->log_result = log_result;
 
     return calculator;
 }
