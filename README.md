@@ -34,24 +34,7 @@ complexity:
 
 Every crate from 3 onwards links against [musl](https://musl.libc.org/) v1.2.6,
 compiled from source for `wasm32-unknown-unknown` by
-[`3rd-party/wasm32-libc`](3rd-party/wasm32-libc). What gets built is the part of
-musl that needs no operating system underneath: string handling, character
-classification, `printf` and the rest of the formatting and parsing code,
-sorting, searching, math, and the stdio layer above them. Around 560 C files in
-all.
-
-Files, sockets, processes, signals, threads, time and `mmap` are left out. A
-call to `open` or `fork` fails to link rather than returning a plausible looking
-error at runtime, which is the honest answer on a target with no kernel under
-it.
-
-`malloc`, `calloc`, `realloc` and `free` are Rust rather than musl, on purpose.
-musl's allocator grows the heap through `brk` and `mmap`, neither of which
-exists here, and a second allocator would carve up linear memory that Rust also
-believes it owns. Forwarding every C allocation to Rust's global allocator keeps
-one heap, and that heap grows the way `WebAssembly.Memory.grow` expects. Each
-block carries a 16-byte header holding its size, because `free(ptr)` does not
-carry the layout that Rust's `dealloc` needs.
+[`3rd-party/wasm32-libc`](3rd-party/wasm32-libc).
 
 3. **[Libc and Heap](crates/3_libc_and_heap_allocation)**. Stores a value on the
    heap from C with `malloc` and `free`, on the same heap Rust allocates from.
